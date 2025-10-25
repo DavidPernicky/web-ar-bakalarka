@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <title>Moja prvá AR stránka</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.min.js"></script>
+  <style>body, html { margin:0; overflow:hidden; }</style>
+</head>
+<body>
+  <a-scene embedded arjs="sourceType: webcam; trackingMethod: best;">
+    <a-assets>
+      <a-asset-item id="modelauto" src="model/Car.glb"></a-asset-item>
+      <a-asset-item id="modelmodre" src="model/Pistol.glb"></a-asset-item>
+    </a-assets>
+
+    <!-- Marker s vlastným QR kódom pre auto -->
+    <a-marker type="pattern" url="marker/opravenymarker.patt">
+      <a-entity gltf-model="#modelauto" scale="0.5 0.5 0.5" position="0 0 0"></a-entity>
+    </a-marker>
+
+    <!-- Marker pre pistolu -->
+    <a-marker type="pattern" url="marker/skuskabuldoz.patt">
+      <a-entity gltf-model="#modelmodre" scale="0.5 0.5 0.5" position="0 0 0"></a-entity>
+    </a-marker>
+
+    <!-- Kamera -->
+    <a-entity camera></a-entity>
+  </a-scene>
+</body>
+
+</html>
