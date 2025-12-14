@@ -1,32 +1,92 @@
 <!DOCTYPE html>
-<html lang="sk">
-<head>
-  <meta charset="UTF-8">
-  <title>Moja prvá AR stránka</title>
-  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.min.js"></script>
-  <style>body, html { margin:0; overflow:hidden; }</style>
-</head>
-<body>
-  <a-scene embedded arjs="sourceType: webcam; trackingMethod: best;">
-    <a-assets>
-      <a-asset-item id="modelauto" src="model/Car.glb"></a-asset-item>
-      <a-asset-item id="modelmodre" src="model/Pistol.glb"></a-asset-item>
-    </a-assets>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AR Vizitka - Dávid Pernický (3D)</title>
+    
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
 
-    <!-- Marker s vlastným QR kódom pre auto -->
-    <a-marker type="pattern" url="marker/opravenymarker.patt">
-      <a-entity gltf-model="#modelauto" scale="0.5 0.5 0.5" position="0 0 0"></a-entity>
-    </a-marker>
+    <script>
+      // 2. JAVASCRIPT: Logika pre klikateľné tlačidlá (AR interakcia)
+      AFRAME.registerComponent('click-handler', {
+        init: function () {
+          this.el.addEventListener('click', () => {
+            const link = this.el.getAttribute("data-link");
+            if (link) {
+              // Otvorí odkaz v novom okne
+              window.open(link, '_blank'); 
+            }
+          });
+        }
+      });
+    </script>
+  </head>
+  <body>
+    
+    <a-scene 
+      mindar-image="imageTargetSrc: ./targets.mind;" 
+      color-space="sRGB" 
+      renderer="colorManagement: true, physicallyCorrectLights" 
+      vr-mode-ui="enabled: false" 
+      device-orientation-permission-ui="enabled: false">
+      
+      <a-assets>
+        <img id="icon-web" src="assets/globe-solid-full.svg" />
+        <img id="icon-email" src="assets/envelope-solid-full.svg" />
+        
+        <a-asset-item id="avatar-model" src="assets/693ec253b6235d0cd191a3bf.glb"></a-asset-item> 
+      </a-assets>
 
-    <!-- Marker pre pistolu -->
-    <a-marker type="pattern" url="marker/skuskabuldoz.patt">
-      <a-entity gltf-model="#modelmodre" scale="0.5 0.5 0.5" position="0 0 0"></a-entity>
-    </a-marker>
+      <a-camera position="0 0 0" look-controls="enabled: false">
+        <a-entity position="0 0 -1" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03;" material="color: white; shader: flat" cursor="fuse: false; rayOrigin: mouse;" raycaster="far: 999; objects: .clickable"></a-entity>
+      </a-camera>
 
-    <!-- Kamera -->
-    <a-entity camera></a-entity>
-  </a-scene>
-</body>
+      <a-entity mindar-image-target="targetIndex: 0">
+        
+        <a-gltf-model 
+          src="#avatar-model" 
+          position="0 0.5 0"    
+          scale="0.3 0.3 0.3"    
+          rotation="0 180 0">  </a-gltf-model>
+        
+        <a-text 
+          value="Dávid Pernický" 
+          color="white" 
+          position="0 0.05 0" 
+          width="1.8" 
+          align="center">
+        </a-text>
+        
+        <a-text 
+          value="Študent, Katedra informatiky" 
+          color="#AAA" 
+          position="0 -0.05 0" 
+          width="1.2" 
+          align="center">
+        </a-text>
 
+        <a-image 
+          src="#icon-web" 
+          position="-0.1 -0.3 0" 
+          width="0.15" 
+          height="0.15" 
+          class="clickable" 
+          click-handler 
+          data-link="https://www.tvoja-portfolio-stranka.sk">
+        </a-image>
+        
+        <a-image 
+          src="#icon-email" 
+          position="0.1 -0.3 0" 
+          width="0.15" 
+          height="0.15" 
+          class="clickable" 
+          click-handler 
+          data-link="mailto:hello@reallygreatsite.com">
+        </a-image>
+
+      </a-entity>
+    </a-scene>
+  </body>
 </html>
