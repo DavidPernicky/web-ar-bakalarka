@@ -28,13 +28,13 @@
         /* --- CONTAINER PRE IKONY --- */
         #ui-overlay {
             position: absolute;
-            bottom: 400px;
-            left: 95%;
+            bottom: 40px;
+            left: 50%;
             transform: translateX(-50%);
             z-index: 1000;
             display: none; /* Skryté, kým sa nenájde vizitka */
             gap: 25px; /* Medzera medzi ikonami */
-            flex-direction: column; /* HLAVNÁ ZMENA: pod seba */
+           flex-direction: row; /* Ikony vedľa seba */
             align-items: center;
         }
 
@@ -139,9 +139,38 @@
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
       <a-entity id="target-entity" mindar-image-target="targetIndex: 0">
-        <a-gltf-model src="#avatar-model" position="1 -0.1 0" scale="0.3 0.3 0.3" rotation="0 0 0"></a-gltf-model>
-        <a-text value="David Pernicky" color="white" position="0 0.05 0.1" width="2" align="center"></a-text>
-        <a-text value="Student, Katedra informatiky" color="#007bff" position="0 -0.05 0.1" width="1.4" align="center"></a-text>
+        <a-plane 
+            position="0 0 0.005" 
+            width="1" height="0.55" 
+            material="color: #000; opacity: 0.9; transparent: true; shader: flat">
+        </a-plane>
+
+        <a-entity 
+            line="start: -0.5 -0.275 0.01; end: 0.5 -0.275 0.01; color: #002bff"
+            line__2="start: 0.5 -0.275 0.01; end: 0.5 0.275 0.01; color: #002bff"
+            line__3="start: 0.5 0.275 0.01; end: -0.5 0.275 0.01; color: #002bff"
+            line__4="start: -0.5 0.275 0.01; end: -0.5 -0.275 0.01; color: #002bff">
+        </a-entity>
+
+        <a-gltf-model src="#avatar-model" 
+        position="-0.3 -0.25 0.05" 
+        scale="0.25 0.25 0.25" 
+        rotation="0 0 0">
+        </a-gltf-model>
+
+        <a-text 
+        value="David Pernicky" 
+        color="white" 
+        position="-0.1 0.1 0.02" 
+        width="1.9" 
+        allign="left">
+
+        <a-text value="Student,\n Katedra informatiky" 
+        color="#007bff" 
+        position="0 -0.1 0.1" 
+        width="1.4" 
+        allign="center">
+        </a-text>
       </a-entity>
     </a-scene>
 
