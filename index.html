@@ -1,92 +1,149 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="sk">
+<head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AR Vizitka - Dávid Pernický (3D)</title>
+    <title>AR Vizitka - Dávid Pernický</title>
     
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+    <style>
+        body { margin: 0; overflow: hidden; font-family: sans-serif; }
+        
+        /* Loading Screen */
+        #loading-overlay {
+            display: flex; align-items: center; justify-content: center;
+            position: absolute; left: 0; right: 0; top: 0; bottom: 0;
+            background: #111; color: white; z-index: 9999;
+            flex-direction: column;
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            width: 40px; height: 40px; border-radius: 50%;
+            border-left-color: #007bff; animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- CONTAINER PRE IKONY --- */
+        #ui-overlay {
+            position: absolute;
+            bottom: 400px;
+            left: 95%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: none; /* Skryté, kým sa nenájde vizitka */
+            gap: 25px; /* Medzera medzi ikonami */
+            flex-direction: column; /* HLAVNÁ ZMENA: pod seba */
+            align-items: center;
+        }
+
+        /* Spoločný štýl pre ikony */
+        .icon-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: transform 0.2s;
+            border: 3px solid white;
+            text-decoration: none;
+        }
+
+        /* Instagram Farba */
+        .insta-color {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        }
+
+        /* Telefón Farba (Zelená) */
+        .phone-color {
+            background: #25D366;
+        }
+
+        .web-color {
+            background: #373a3b;
+        }
+
+        .icon-btn img {
+            width: 32px;
+            height: 32px;
+            filter: invert(1);
+        }
+
+        .icon-btn:active { transform: scale(0.85); }
+        .hidden { display: none !important; }
+
+        /* Flexbox pre zobrazenie vedľa seba */
+        .flex-row { display: flex; flex-direction: row; }
+    </style>
 
     <script>
-      // 2. JAVASCRIPT: Logika pre klikateľné tlačidlá (AR interakcia)
-      AFRAME.registerComponent('click-handler', {
-        init: function () {
-          this.el.addEventListener('click', () => {
-            const link = this.el.getAttribute("data-link");
-            if (link) {
-              // Otvorí odkaz v novom okne
-              window.open(link, '_blank'); 
-            }
-          });
-        }
-      });
+        window.addEventListener("DOMContentLoaded", () => {
+            const sceneEl = document.querySelector('a-scene');
+            const loadingOverlay = document.querySelector('#loading-overlay');
+            const uiOverlay = document.querySelector('#ui-overlay');
+            const targetEntity = document.querySelector('#target-entity');
+
+            sceneEl.addEventListener("arReady", () => {
+                loadingOverlay.classList.add("hidden");
+            });
+
+            targetEntity.addEventListener("targetFound", () => {
+                uiOverlay.classList.add("flex-row");
+                uiOverlay.style.display = "flex";
+            });
+
+            targetEntity.addEventListener("targetLost", () => {
+                uiOverlay.style.display = "none";
+                uiOverlay.classList.remove("flex-row");
+            });
+        });
     </script>
-  </head>
-  <body>
+</head>
+<body>
+
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p>Pripravujem AR zážitok...</p>
+    </div>
+
+    <div id="ui-overlay">
+        <a href="tel:+421949069902" class="icon-btn phone-color">
+            <img src="assets/phone-solid-full.svg" alt="Telefón">
+        </a>
+
+        <a href="https://www.instagram.com/pernicky_davidd/" target="_blank" class="icon-btn insta-color">
+            <img src="assets/instagram-brands-solid-full.svg" alt="Instagram">
+        </a>
+
+       <a href="https://kti.aos.sk/" target="_blank" class="icon-btn web-color">
+            <img src="assets/globe-solid-full.svg" alt="web">
+        </a>
+
+
+    </div>
     
     <a-scene 
-      mindar-image="imageTargetSrc: ./targets.mind;" 
+      mindar-image="imageTargetSrc: ./targets.mind; autoStart: true;" 
       color-space="sRGB" 
       renderer="colorManagement: true, physicallyCorrectLights" 
       vr-mode-ui="enabled: false" 
       device-orientation-permission-ui="enabled: false">
       
       <a-assets>
-        <img id="icon-web" src="assets/globe-solid-full.svg" />
-        <img id="icon-email" src="assets/envelope-solid-full.svg" />
-        
         <a-asset-item id="avatar-model" src="assets/693ec253b6235d0cd191a3bf.glb"></a-asset-item> 
       </a-assets>
 
-      <a-camera position="0 0 0" look-controls="enabled: false">
-        <a-entity position="0 0 -1" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03;" material="color: white; shader: flat" cursor="fuse: false; rayOrigin: mouse;" raycaster="far: 999; objects: .clickable"></a-entity>
-      </a-camera>
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-      <a-entity mindar-image-target="targetIndex: 0">
-        
-        <a-gltf-model 
-          src="#avatar-model" 
-          position="0 0.5 0"    
-          scale="0.3 0.3 0.3"    
-          rotation="0 180 0">  </a-gltf-model>
-        
-        <a-text 
-          value="Dávid Pernický" 
-          color="white" 
-          position="0 0.05 0" 
-          width="1.8" 
-          align="center">
-        </a-text>
-        
-        <a-text 
-          value="Študent, Katedra informatiky" 
-          color="#AAA" 
-          position="0 -0.05 0" 
-          width="1.2" 
-          align="center">
-        </a-text>
-
-        <a-image 
-          src="#icon-web" 
-          position="-0.1 -0.3 0" 
-          width="0.15" 
-          height="0.15" 
-          class="clickable" 
-          click-handler 
-          data-link="https://www.tvoja-portfolio-stranka.sk">
-        </a-image>
-        
-        <a-image 
-          src="#icon-email" 
-          position="0.1 -0.3 0" 
-          width="0.15" 
-          height="0.15" 
-          class="clickable" 
-          click-handler 
-          data-link="mailto:hello@reallygreatsite.com">
-        </a-image>
-
+      <a-entity id="target-entity" mindar-image-target="targetIndex: 0">
+        <a-gltf-model src="#avatar-model" position="1 -0.1 0" scale="0.3 0.3 0.3" rotation="0 0 0"></a-gltf-model>
+        <a-text value="David Pernicky" color="white" position="0 0.05 0.1" width="2" align="center"></a-text>
+        <a-text value="Student, Katedra informatiky" color="#007bff" position="0 -0.05 0.1" width="1.4" align="center"></a-text>
       </a-entity>
     </a-scene>
-  </body>
+
+</body>
 </html>
