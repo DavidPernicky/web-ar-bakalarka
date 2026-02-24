@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AR Vojenská Vizitka</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+    <style>
+      /* Štýl pre tlačidlo skenera */
+      #scan-button {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        padding: 15px 25px;
+        background-color: #00FF00; /* Vojenská zelená / jasná */
+        color: black;
+        border: none;
+        border-radius: 30px;
+        font-weight: bold;
+        font-family: sans-serif;
+        text-transform: uppercase;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
+        cursor: pointer;
+        display: block;
+        text-decoration: none;
+        text-align: center;
+      }
+      #scan-button:active {
+        background-color: #00cc00;
+        transform: translateX(-50%) scale(0.95);
+      }
+    </style>
+
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentID = urlParams.get('id');
+
+      // TVOJ CSV LINK (Už opravený bez "T")
+      const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQ-SFdCTOWEviIYJZSk0mwkyh6li8dnKCQB_LnLvrwEZklXjggD67hqnsx0kBIxoEUZoiqDNp_gfWF/pub?output=csv";
+
+      AFRAME.registerComponent('vcard-logic', {
+        init: function () {
+          if (!currentID) {
+            // Ak v URL chýba ID, tlačidlo môže slúžiť na návrat k inštrukciám
+            return;
+          }
+
+          fetch(csvUrl)
+            .then(response => response.text())
+            .then(csvText => {
+              const rows = csvText.split('\n');
+              for (let i = 1; i < rows.length; i++) {
+                const columns = rows[i].split(',');
+                if (columns[0].trim() === currentID) {
+                  const plneMeno = `${columns[1]} ${columns[2]} ${columns[3]} ${columns[4]}`;
+                  const telefon = `Tel: ${columns[5]}`;
+                  const email = `Email: ${columns[6]}`;
+
+                  document.querySelector('#ar-meno').setAttribute('value', plneMeno);
+                  document.querySelector('#ar-telefon').setAttribute('value', telefon);
+                  document.querySelector('#ar-email').setAttribute('value', email);
+                  break;
+                }
+              }
+            })
+            .catch(error => console.error("Chyba tabuľky:", error));
+        }
+      });
+
+      // Funkcia pre tlačidlo - vráti používateľa na foťák/skener
+      function openScanner() {
+        // Tu môžeš zadať buď hlavnú stránku tvojho webu, 
+        // alebo len upozorniť používateľa, aby znova naskenoval QR kód.
+        // Väčšinou stačí zavrieť okno alebo ho poslať na "index.html" bez parametrov.
+        window.location.href = "index.html"; 
+      }
+    </script>
+  </head>
+  
+  <body style="margin: 0; overflow: hidden;">
+
+    <button id="scan-button" onclick="openScanner()">Skenovať ďalšiu vizitku</button>
+
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" vcard-logic>
+      
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-plane position="0 0.7 0" width="1.2" height="0.6" color="#111111" opacity="0.9"></a-plane>
+        <a-text id="ar-meno" value="Nacitavam..." color="#00FF00" position="-0.55 0.85 0.05" width="2.5"></a-text>
+        <a-text id="ar-telefon" value="" color="#FFFFFF" position="-0.55 0.65 0.05" width="2"></a-text>
+        <a-text id="ar-email" value="" color="#FFFFFF" position="-0.55 0.50 0.05" width="2"></a-text>
+      </a-entity>
+    </a-scene>
+  </body>
+</html>
