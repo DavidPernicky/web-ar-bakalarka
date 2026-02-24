@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
     <title>AR Vojenská Vizitka + Skener</title>
     
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
@@ -69,19 +70,29 @@
           if (!currentID) return;
 
           fetch(csvUrl)
-            .then(response => response.text())
-            .then(csvText => {
+            .then(response => response.arrayBuffer()) // Načítame dáta ako Buffer pre správne kódovanie
+            .then(buffer => {
+              // Dekódovanie cez UTF-8 opraví slovenskú gramatiku
+              const decoder = new TextDecoder('utf-8');
+              const csvText = decoder.decode(buffer);
+              
               const rows = csvText.split('\n');
               for (let i = 1; i < rows.length; i++) {
                 const columns = rows[i].split(',');
-                if (columns[0].trim() === currentID) {
-                  document.querySelector('#ar-meno').setAttribute('value', `${columns[1]} ${columns[2]} ${columns[3]} ${columns[4]}`);
-                  document.querySelector('#ar-telefon').setAttribute('value', `Tel: ${columns[5]}`);
-                  document.querySelector('#ar-email').setAttribute('value', `Email: ${columns[6]}`);
+                if (columns[0] && columns[0].trim() === currentID) {
+                  // Spájame meno a hodnosť zo stĺpcov tabuľky
+                  const plneMeno = `${columns[1]} ${columns[2]} ${columns[3]} ${columns[4]}`.trim();
+                  const telefon = `Tel: ${columns[5]}`.trim();
+                  const email = `Email: ${columns[6]}`.trim();
+
+                  document.querySelector('#ar-meno').setAttribute('value', plneMeno);
+                  document.querySelector('#ar-telefon').setAttribute('value', telefon);
+                  document.querySelector('#ar-email').setAttribute('value', email);
                   break;
                 }
               }
-            });
+            })
+            .catch(err => console.error("Chyba pri načítaní CSV:", err));
         }
       });
 
