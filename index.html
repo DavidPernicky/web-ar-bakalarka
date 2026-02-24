@@ -2,12 +2,14 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AR Vojenská Vizitka</title>
+    <title>AR Vojenská Vizitka + Skener</title>
+    
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
 
     <style>
-      /* Štýl pre tlačidlo skenera */
+      /* Hlavné tlačidlo skenera */
       #scan-button {
         position: fixed;
         bottom: 20px;
@@ -15,38 +17,56 @@
         transform: translateX(-50%);
         z-index: 1000;
         padding: 15px 25px;
-        background-color: #00FF00; /* Vojenská zelená / jasná */
+        background-color: #00FF00;
         color: black;
         border: none;
         border-radius: 30px;
         font-weight: bold;
-        font-family: sans-serif;
         text-transform: uppercase;
         box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
         cursor: pointer;
-        display: block;
-        text-decoration: none;
-        text-align: center;
       }
-      #scan-button:active {
-        background-color: #00cc00;
-        transform: translateX(-50%) scale(0.95);
+
+      /* Kontajner pre vyskakovací skener */
+      #qr-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.95);
+        z-index: 2000;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #qr-reader {
+        width: 80%;
+        max-width: 300px;
+        border: 2px solid #00FF00;
+      }
+
+      .close-btn {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background: red;
+        color: white;
+        border: none;
+        border-radius: 5px;
       }
     </style>
 
     <script>
       const urlParams = new URLSearchParams(window.location.search);
       const currentID = urlParams.get('id');
-
-      // TVOJ CSV LINK (Už opravený bez "T")
       const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQ-SFdCTOWEviIYJZSk0mwkyh6li8dnKCQB_LnLvrwEZklXjggD67hqnsx0kBIxoEUZoiqDNp_gfWF/pub?output=csv";
 
+      // LOGIKA PRE NAČÍTANIE DÁT
       AFRAME.registerComponent('vcard-logic', {
         init: function () {
-          if (!currentID) {
-            // Ak v URL chýba ID, tlačidlo môže slúžiť na návrat k inštrukciám
-            return;
-          }
+          if (!currentID) return;
 
           fetch(csvUrl)
             .then(response => response.text())
@@ -55,39 +75,57 @@
               for (let i = 1; i < rows.length; i++) {
                 const columns = rows[i].split(',');
                 if (columns[0].trim() === currentID) {
-                  const plneMeno = `${columns[1]} ${columns[2]} ${columns[3]} ${columns[4]}`;
-                  const telefon = `Tel: ${columns[5]}`;
-                  const email = `Email: ${columns[6]}`;
-
-                  document.querySelector('#ar-meno').setAttribute('value', plneMeno);
-                  document.querySelector('#ar-telefon').setAttribute('value', telefon);
-                  document.querySelector('#ar-email').setAttribute('value', email);
+                  document.querySelector('#ar-meno').setAttribute('value', `${columns[1]} ${columns[2]} ${columns[3]} ${columns[4]}`);
+                  document.querySelector('#ar-telefon').setAttribute('value', `Tel: ${columns[5]}`);
+                  document.querySelector('#ar-email').setAttribute('value', `Email: ${columns[6]}`);
                   break;
                 }
               }
-            })
-            .catch(error => console.error("Chyba tabuľky:", error));
+            });
         }
       });
 
-      // Funkcia pre tlačidlo - vráti používateľa na foťák/skener
+      // LOGIKA PRE SKENER
+      let html5QrCode;
+
       function openScanner() {
-        // Tu môžeš zadať buď hlavnú stránku tvojho webu, 
-        // alebo len upozorniť používateľa, aby znova naskenoval QR kód.
-        // Väčšinou stačí zavrieť okno alebo ho poslať na "index.html" bez parametrov.
-        window.location.href = "index.html"; 
+        document.getElementById('qr-overlay').style.display = 'flex';
+        html5QrCode = new Html5Qrcode("qr-reader");
+        
+        html5QrCode.start(
+          { facingMode: "environment" }, 
+          { fps: 10, qrbox: 250 },
+          (decodedText) => {
+            // Ak nájde kód, presmeruje na novú URL (napr. vizitka.html?id=Revay)
+            window.location.href = decodedText;
+          }
+        ).catch(err => console.error("Chyba skenera:", err));
+      }
+
+      function closeScanner() {
+        if (html5QrCode) {
+          html5QrCode.stop().then(() => {
+            document.getElementById('qr-overlay').style.display = 'none';
+          });
+        } else {
+          document.getElementById('qr-overlay').style.display = 'none';
+        }
       }
     </script>
   </head>
   
   <body style="margin: 0; overflow: hidden;">
 
-    <button id="scan-button" onclick="openScanner()">Skenovať ďalšiu vizitku</button>
+    <button id="scan-button" onclick="openScanner()">Skenovať ďalšiu</button>
+
+    <div id="qr-overlay">
+      <h3 style="color:white;">Naskenujte QR kód kolegu</h3>
+      <div id="qr-reader"></div>
+      <button class="close-btn" onclick="closeScanner()">Zavrieť</button>
+    </div>
 
     <a-scene mindar-image="imageTargetSrc: ./targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" vcard-logic>
-      
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-
       <a-entity mindar-image-target="targetIndex: 0">
         <a-plane position="0 0.7 0" width="1.2" height="0.6" color="#111111" opacity="0.9"></a-plane>
         <a-text id="ar-meno" value="Nacitavam..." color="#00FF00" position="-0.55 0.85 0.05" width="2.5"></a-text>
