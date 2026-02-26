@@ -57,6 +57,29 @@
         border: none;
         border-radius: 5px;
       }
+
+      /* Kontajner pre kontaktné tlačidlá */
+      #contact-buttons {
+        position: fixed;
+        bottom: 80px; /* Bude to kúsok nad skenovacím tlačidlom */
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        display: none; /* Na začiatku budú skryté, kým sa nenačítajú dáta */
+        gap: 15px;
+        font-family: sans-serif;
+      }
+
+      .contact-btn {
+        padding: 12px 20px;
+        background-color: #008CBA; /* Modrá farba pre kontakty */
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
+        font-weight: bold;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
+        text-align: center;
+      }
     </style>
 
     <script>
@@ -80,14 +103,19 @@
               for (let i = 1; i < rows.length; i++) {
                 const columns = rows[i].split(',');
                 if (columns[0] && columns[0].trim() === currentID) {
-                  // Spájame meno a hodnosť zo stĺpcov tabuľky
                   const plneMeno = `${columns[1]} ${columns[2]} ${columns[3]} ${columns[4]}`.trim();
-                  const telefon = `Tel: ${columns[5]}`.trim();
-                  const email = `Email: ${columns[6]}`.trim();
-
+                  
+                  // Tvoj pôvodný kód pre AR texty
                   document.querySelector('#ar-meno').setAttribute('value', plneMeno);
-                  document.querySelector('#ar-telefon').setAttribute('value', telefon);
-                  document.querySelector('#ar-email').setAttribute('value', email);
+                  document.querySelector('#ar-telefon').setAttribute('value', `Tel: ${columns[5]}`);
+                  document.querySelector('#ar-email').setAttribute('value', `Email: ${columns[6]}`);
+                  
+                  // NOVÉ: Nastavenie liniek pre HTML tlačidlá
+                  document.getElementById('btn-volat').href = `tel:${columns[5].trim()}`;
+                  document.getElementById('btn-pisat').href = `mailto:${columns[6].trim()}`;
+                  
+                  // Zobrazenie tlačidiel na obrazovke
+                  document.getElementById('contact-buttons').style.display = 'flex';
                   break;
                 }
               }
@@ -128,6 +156,10 @@
   <body style="margin: 0; overflow: hidden;">
 
     <button id="scan-button" onclick="openScanner()">Skenovať ďalšiu vizitku</button>
+    <div id="contact-buttons">
+      <a id="btn-volat" href="#" class="contact-btn">📞 Zavolať</a>
+      <a id="btn-pisat" href="#" class="contact-btn">✉️ E-mail</a>
+    </div>
 
     <div id="qr-overlay">
       <h3 style="color:white;">Naskenujte QR kód kolegu</h3>
