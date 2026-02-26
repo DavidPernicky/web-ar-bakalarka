@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="UTF-8">
-    <title>AR Vojenská Vizitka + Skener</title>
+    <title>AR Vizitka</title>
     
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -20,7 +20,7 @@
         padding: 15px 25px;
         background-color: #00FF00;
         color: black;
-        border: none;
+        border: none;+
         border-radius: 30px;
         font-weight: bold;
         text-transform: uppercase;
@@ -174,8 +174,8 @@
         <a-text id="ar-meno" value="Nacitavam..." color="#00FF00" position="-0.55 0.85 0.05" width="2.5"></a-text>
 
         <a-gltf-model src="./logokti.glb" 
-               scale="0.5 0.5 0.5" 
-               position="-0.8 1.0 0.2"
+               scale="1.5 1.5 1.5" 
+               position="0.8 1.0 0.2"
                animation__rotate="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear"
                animation__float="property: position; from: -0.8 0.95 0.2; to: -0.8 1.05 0.2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
         </a-gltf-model>
