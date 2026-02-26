@@ -56,23 +56,24 @@
         color: white;
         border: none;
         border-radius: 5px;
+        cursor: pointer;
       }
 
       /* Kontajner pre kontaktné tlačidlá */
       #contact-buttons {
         position: fixed;
-        bottom: 80px; /* Bude to kúsok nad skenovacím tlačidlom */
+        bottom: 80px;
         left: 50%;
         transform: translateX(-50%);
         z-index: 1000;
-        display: none; /* Na začiatku budú skryté, kým sa nenačítajú dáta */
+        display: none; 
         gap: 15px;
         font-family: sans-serif;
       }
 
       .contact-btn {
         padding: 12px 20px;
-        background-color: #008CBA; /* Modrá farba pre kontakty */
+        background-color: #008CBA;
         color: white;
         text-decoration: none;
         border-radius: 25px;
@@ -93,9 +94,8 @@
           if (!currentID) return;
 
           fetch(csvUrl)
-            .then(response => response.arrayBuffer()) // Načítame dáta ako Buffer pre správne kódovanie
+            .then(response => response.arrayBuffer()) 
             .then(buffer => {
-              // Dekódovanie cez UTF-8 opraví slovenskú gramatiku
               const decoder = new TextDecoder('utf-8');
               const csvText = decoder.decode(buffer);
               
@@ -105,16 +105,14 @@
                 if (columns[0] && columns[0].trim() === currentID) {
                   const plneMeno = `${columns[1]} ${columns[2]} ${columns[3]} ${columns[4]}`.trim();
                   
-                  // Tvoj pôvodný kód pre AR texty
+                  // Nastavenie mena v AR
                   document.querySelector('#ar-meno').setAttribute('value', plneMeno);
-                  document.querySelector('#ar-telefon').setAttribute('value', `Tel: ${columns[5]}`);
-                  document.querySelector('#ar-email').setAttribute('value', `Email: ${columns[6]}`);
                   
-                  // NOVÉ: Nastavenie liniek pre HTML tlačidlá
+                  // Nastavenie HTML tlačidiel na volanie a mail
                   document.getElementById('btn-volat').href = `tel:${columns[5].trim()}`;
                   document.getElementById('btn-pisat').href = `mailto:${columns[6].trim()}`;
                   
-                  // Zobrazenie tlačidiel na obrazovke
+                  // Zobrazenie HTML tlačidiel na obrazovke
                   document.getElementById('contact-buttons').style.display = 'flex';
                   break;
                 }
@@ -135,7 +133,6 @@
           { facingMode: "environment" }, 
           { fps: 10, qrbox: 250 },
           (decodedText) => {
-            // Ak nájde kód, presmeruje na novú URL (napr. vizitka.html?id=Revay)
             window.location.href = decodedText;
           }
         ).catch(err => console.error("Chyba skenera:", err));
@@ -157,7 +154,7 @@
 
     <button id="scan-button" onclick="openScanner()">Skenovať ďalšiu vizitku</button>
     <div id="contact-buttons">
-      <a id="btn-volat" href="#" class="contact-btn">📞 Zavolať</a>
+      <a id="btn-volat" href="#" class="contact-btn">📞 Volať</a>
       <a id="btn-pisat" href="#" class="contact-btn">✉️ E-mail</a>
     </div>
 
@@ -169,11 +166,20 @@
 
     <a-scene mindar-image="imageTargetSrc: ./targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" vcard-logic>
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+      
       <a-entity mindar-image-target="targetIndex: 0">
-        <a-plane position="0 0.7 0" width="1.2" height="0.6" color="#111111" opacity="0.9"></a-plane>
+        
+        <a-plane position="0 0.85 0" width="1.2" height="0.3" color="#111111" opacity="0.9"></a-plane>
+        
         <a-text id="ar-meno" value="Nacitavam..." color="#00FF00" position="-0.55 0.85 0.05" width="2.5"></a-text>
-        <a-text id="ar-telefon" value="" color="#FFFFFF" position="-0.55 0.65 0.05" width="2"></a-text>
-        <a-text id="ar-email" value="" color="#FFFFFF" position="-0.55 0.50 0.05" width="2"></a-text>
+
+        <a-gltf-model src="./logokti.glb" 
+               scale="0.5 0.5 0.5" 
+               position="-0.8 1.0 0.2"
+               animation__rotate="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear"
+               animation__float="property: position; from: -0.8 0.95 0.2; to: -0.8 1.05 0.2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
+        </a-gltf-model>
+
       </a-entity>
     </a-scene>
   </body>
