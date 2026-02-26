@@ -88,6 +88,29 @@
       const currentID = urlParams.get('id');
       const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQ-SFdCTOWEviIYJZSk0mwkyh6li8dnKCQB_LnLvrwEZklXjggD67hqnsx0kBIxoEUZoiqDNp_gfWF/pub?output=csv";
 
+
+      // VYLEPŠENÝ SKRIPT NA VYCENTROVANIE 3D MODELU
+      AFRAME.registerComponent('auto-center', {
+        init: function () {
+          this.el.addEventListener('model-loaded', () => {
+            const obj = this.el.getObject3D('mesh');
+            if (!obj) return;
+            
+            // Vypočíta hranice modelu a jeho skutočný stred
+            const box = new THREE.Box3().setFromObject(obj);
+            const center = new THREE.Vector3();
+            box.getCenter(center);
+            
+            // Fyzicky posunie model voči jeho obalu tak, aby bol stred na súradniciach 0,0,0
+            obj.position.x = -center.x;
+            obj.position.y = -center.y;
+            obj.position.z = -center.z;
+            
+            console.log("3D model úspešne vycentrovaný!");
+          });
+        }
+      });
+
       // LOGIKA PRE NAČÍTANIE DÁT
       AFRAME.registerComponent('vcard-logic', {
         init: function () {
@@ -174,6 +197,7 @@
         <a-text id="ar-meno" value="Nacitavam..." color="#00FF00" position="-0.55 0.85 0.05" width="2.5"></a-text>
 
         <a-gltf-model src="./logokti.glb" 
+              auto-center
                scale="1.5 1.5 1.5" 
                position="0.8 1.0 0.2"
                animation__rotate="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear"
