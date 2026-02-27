@@ -125,8 +125,8 @@
                   const plneMeno = `${columns[1]} ${columns[2]} ${columns[3]} ${columns[4]}`.trim();
                   
                   document.querySelector('#ar-meno').setAttribute('value', plneMeno);
-                  document.getElementById('btn-volat-hidden').href = `tel:${columns[5].trim()}`;
-                  document.getElementById('btn-pisat-hidden').href = `mailto:${columns[6].trim()}`;
+                  document.getElementById('btn-volat').href = `tel:${columns[5].trim()}`;
+                  document.getElementById('btn-pisat').href = `mailto:${columns[6].trim()}`;
                   document.getElementById('contact-buttons').style.display = 'flex';
                   break;
                 }
@@ -226,7 +226,10 @@
     
     <a id="web-button" href="https://kti.aos.sk/index.php" target="_blank">Webstránka katedry</a>
 
-    
+    <div id="contact-buttons">
+      <a id="btn-volat" href="#" class="contact-btn">📞</a>
+      <a id="btn-pisat" href="#" class="contact-btn">✉️</a>
+    </div>
 
     <div id="qr-overlay">
       <h3 style="color:white;">Naskenujte QR kod</h3>
@@ -240,26 +243,14 @@
       
       <a-entity mindar-image-target="targetIndex: 0">
         
-       <a-entity position="0 -0.5 0">
+       <a-entity position="0 1.85 0">
           <a-circle src="./fotkyKatedra/david.png" radius="0.18"></a-circle>
-          <a-text id="ar-meno" value="Načítavam..." color="#FFFFFF" align="center" position="0 -0.25 0.05" width="2.2" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
-
-          <a-entity position="-0.3 -0.45 0.05" class="clickable" 
-                    onclick="window.location.href=document.getElementById('btn-volat-hidden').getAttribute('href')">
-            <a-plane width="0.25" height="0.12" color="#00FF00" opacity="0.8" rotation="0 0 0">
-              <a-text value="VOLAŤ" color="black" align="center" width="1.5" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
-            </a-plane>
-          </a-entity>
-
-          <a-entity position="0.3 -0.45 0.05" class="clickable" 
-                    onclick="window.location.href=document.getElementById('btn-pisat-hidden').getAttribute('href')">
-            <a-plane width="0.25" height="0.12" color="#008CBA" opacity="0.8">
-              <a-text value="EMAIL" color="white" align="center" width="1.5" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
-            </a-plane>
-          </a-entity>
+          
+          <a-text id="ar-meno" value="Nacitavam..." color="#FFFFFF" align="left" position="0.22 0.08 0.05" width="2.2" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+          <a-text value="Katedra Informatiky" color="#00FF00" align="left" position="0.22 -0.05 0.05" width="1.6" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
         </a-entity>
 
-        <a-entity position="0 -1.0 0.2" animation__float="property: position; from: 0 -0.6 0.2; to: 0 -0.7 0.2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
+        <a-entity position="0 -0.6 0.2" animation__float="property: position; from: 0 -0.6 0.2; to: 0 -0.7 0.2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
             <a-gltf-model src="./logokti.glb" scale="1 1 1" position="0 0 0"></a-gltf-model>
             <a-box class="clickable" logo-interact scale="1 1 0.25" position="0 0 0" material="opacity: 0.0; transparent: true; depthWrite: false;"></a-box>
         </a-entity>
@@ -276,8 +267,6 @@
 
       </a-entity>
     </a-scene>
-    <a id="btn-volat-hidden" href="#" style="display:none;"></a>
-    <a id="btn-pisat-hidden" href="#" style="display:none;"></a>
 
   </body>
 </html>
