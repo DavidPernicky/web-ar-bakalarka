@@ -88,6 +88,9 @@
       .mindar-ui-loading {
         pointer-events: none;
       }
+      .a-canvas {
+        pointer-events: auto !important;
+      }
     </style>
 
     <script>
@@ -131,25 +134,12 @@
 
     
       // TESTOVACÍ SKRIPT NA KLIKNUTIE (Vylepšený pre mobily)
+      // ULTIMÁTNY TESTOVACÍ SKRIPT
       AFRAME.registerComponent('test-klik', {
         init: function () {
-          const zmenText = () => {
-            const meno = document.querySelector('#ar-meno');
-            if (meno.getAttribute('value') === 'KLIK FUNGUJE!') return; // Zabrani sekaniu ak kliknes viackrat
-            
-            const povodneMeno = meno.getAttribute('value');
-            meno.setAttribute('value', 'KLIK FUNGUJE!');
-            meno.setAttribute('color', '#FF0000');
-            
-            setTimeout(() => {
-              meno.setAttribute('value', povodneMeno);
-              meno.setAttribute('color', '#00FF00');
-            }, 2000);
-          };
-
-          // Počúva aj na klasický klik myšou, aj na dotyk prstom na mobile!
-          this.el.addEventListener('click', zmenText);
-          this.el.addEventListener('touchstart', zmenText);
+          this.el.addEventListener('click', () => {
+            alert("BINGO!!! Kliknutie konečne funguje!");
+          });
         }
       });
 
@@ -195,8 +185,8 @@
       <button class="close-btn" onclick="closeScanner()">Zavrieť</button>
     </div>
 
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind; filterMinCF: 0.0001; filterBeta: 0.001;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" cursor="rayOrigin: mouse; fuse: false" raycaster="objects: .clickable" vcard-logic>
-     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind; filterMinCF: 0.0001; filterBeta: 0.001;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" vcard-logic>
+    <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="objects: .clickable; far: 10000;"></a-camera>
       
       <a-entity mindar-image-target="targetIndex: 0">
         
