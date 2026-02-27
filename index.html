@@ -122,25 +122,27 @@
         }
       });
 
-      // TESTOVACÍ SKRIPT NA KLIKNUTIE
+    
+      // TESTOVACÍ SKRIPT NA KLIKNUTIE (Vylepšený pre mobily)
       AFRAME.registerComponent('test-klik', {
         init: function () {
-          this.el.addEventListener('click', () => {
+          const zmenText = () => {
             const meno = document.querySelector('#ar-meno');
+            if (meno.getAttribute('value') === 'KLIK FUNGUJE!') return; // Zabrani sekaniu ak kliknes viackrat
             
-            // Uložíme si pôvodné meno
             const povodneMeno = meno.getAttribute('value');
-            
-            // Zmeníme text na červený nápis
             meno.setAttribute('value', 'KLIK FUNGUJE!');
             meno.setAttribute('color', '#FF0000');
             
-            // Po 2 sekundách to vrátime späť
             setTimeout(() => {
               meno.setAttribute('value', povodneMeno);
               meno.setAttribute('color', '#00FF00');
             }, 2000);
-          });
+          };
+
+          // Počúva aj na klasický klik myšou, aj na dotyk prstom na mobile!
+          this.el.addEventListener('click', zmenText);
+          this.el.addEventListener('touchstart', zmenText);
         }
       });
 
@@ -200,7 +202,7 @@
             
             <a-gltf-model src="./logokti.glb" scale="1.5 1.5 1.5" position="0 0 0"></a-gltf-model>
 
-            <a-box class="clickable" test-klik scale="1.5 1.5 0.5" position="0 0 0" material="opacity: 0.0; transparent: true; depthWrite: false;"></a-box>
+           <a-box class="clickable" test-klik scale="1.5 1.5 0.5" position="0 0 0" color="red" material="opacity: 0.5; transparent: true; depthWrite: false;"></a-box>
             
         </a-entity>
 
