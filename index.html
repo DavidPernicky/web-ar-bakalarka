@@ -78,6 +78,25 @@
         box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
         text-align: center;
       }
+      /* Tlačidlo pre web katedry (Zobrazí sa len pri paneli katedry) */
+      #web-button {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        padding: 15px 25px;
+        background-color: #008CBA;
+        color: white;
+        text-decoration: none;
+        border-radius: 30px;
+        font-weight: bold;
+        text-transform: uppercase;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
+        cursor: pointer;
+        display: none; /* Na začiatku je skryté, kým neklikneš na logo */
+        white-space: nowrap;
+      }
 
       .mindar-ui-overlay { pointer-events: none; }
       .mindar-ui-loading { pointer-events: none; }
@@ -117,26 +136,40 @@
         }
       });
 
+      // PREPÍNAČ MEDZI UČITEĽOM A INFO PANELOM (Teraz prepína aj spodné tlačidlá)
       AFRAME.registerComponent('logo-interact', {
         init: function () {
           this.el.addEventListener('click', () => {
+            // AR prvky
             const infoPanel = document.querySelector('#info-panel');
             const menoText = document.querySelector('#ar-meno');
             const podkladMena = document.querySelector('#podklad-mena');
-            const tlacitka = document.getElementById('contact-buttons');
+            
+            // HTML prvky na displeji
+            const tlacitkaKontakt = document.getElementById('contact-buttons');
+            const btnScan = document.getElementById('scan-button');
+            const btnWeb = document.getElementById('web-button');
             
             const isVisible = infoPanel.getAttribute('visible');
             
             if (isVisible) {
+              // NÁVRAT K UČITEĽOVI: Skry panel, ukáž meno, ukáž kontakt a skener
               infoPanel.setAttribute('visible', false);
               menoText.setAttribute('visible', true);
               podkladMena.setAttribute('visible', true);
-              tlacitka.style.display = 'flex';
+              
+              tlacitkaKontakt.style.display = 'flex';
+              btnScan.style.display = 'block'; // Zobraziť skener
+              btnWeb.style.display = 'none';   // Skryť web
             } else {
+              // ZOBRAZENIE KATEDRY: Ukáž panel, skry meno, skry kontakt a skener
               infoPanel.setAttribute('visible', true);
               menoText.setAttribute('visible', false);
               podkladMena.setAttribute('visible', false);
-              tlacitka.style.display = 'none';
+              
+              tlacitkaKontakt.style.display = 'none';
+              btnScan.style.display = 'none';  // Skryť skener
+              btnWeb.style.display = 'block';  // Zobraziť web
             }
           });
         }
@@ -192,6 +225,9 @@
   <body style="margin: 0; overflow: hidden;">
 
     <button id="scan-button" onclick="openScanner()">Skenovať ďalšiu vizitku</button>
+    
+    <a id="web-button" href="https://kti.aos.sk/index.php" target="_blank">Webstránka katedry</a>
+
     <div id="contact-buttons">
       <a id="btn-volat" href="#" class="contact-btn">📞</a>
       <a id="btn-pisat" href="#" class="contact-btn">✉️</a>
