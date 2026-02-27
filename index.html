@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="UTF-8">
-    <title>AR Vizitka - Moderný Dizajn</title>
+    <title>AR Vizitka - Katedra Informatiky</title>
     
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -25,25 +25,6 @@
         text-transform: uppercase;
         box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
         cursor: pointer;
-      }
-
-      #web-button {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1000;
-        padding: 15px 25px;
-        background-color: #008CBA;
-        color: white;
-        text-decoration: none;
-        border-radius: 30px;
-        font-weight: bold;
-        text-transform: uppercase;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
-        cursor: pointer;
-        display: none;
-        white-space: nowrap;
       }
 
       #qr-overlay {
@@ -84,6 +65,7 @@
         z-index: 1000;
         display: none; 
         gap: 15px;
+        font-family: sans-serif;
       }
 
       .contact-btn {
@@ -94,9 +76,30 @@
         border-radius: 25px;
         font-weight: bold;
         box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
+        text-align: center;
+      }
+      /* Tlačidlo pre web katedry (Zobrazí sa len pri paneli katedry) */
+      #web-button {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        padding: 15px 25px;
+        background-color: #008CBA;
+        color: white;
+        text-decoration: none;
+        border-radius: 30px;
+        font-weight: bold;
+        text-transform: uppercase;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
+        cursor: pointer;
+        display: none; /* Na začiatku je skryté, kým neklikneš na logo */
+        white-space: nowrap;
       }
 
-      .mindar-ui-overlay, .mindar-ui-loading { pointer-events: none; }
+      .mindar-ui-overlay { pointer-events: none; }
+      .mindar-ui-loading { pointer-events: none; }
       .a-canvas { pointer-events: auto !important; }
     </style>
 
@@ -108,16 +111,19 @@
       AFRAME.registerComponent('vcard-logic', {
         init: function () {
           if (!currentID) return;
+
           fetch(csvUrl)
             .then(response => response.arrayBuffer()) 
             .then(buffer => {
               const decoder = new TextDecoder('utf-8');
               const csvText = decoder.decode(buffer);
+              
               const rows = csvText.split('\n');
               for (let i = 1; i < rows.length; i++) {
                 const columns = rows[i].split(',');
                 if (columns[0] && columns[0].trim() === currentID) {
                   const plneMeno = `${columns[1]} ${columns[2]} ${columns[3]} ${columns[4]}`.trim();
+                  
                   document.querySelector('#ar-meno').setAttribute('value', plneMeno);
                   document.getElementById('btn-volat').href = `tel:${columns[5].trim()}`;
                   document.getElementById('btn-pisat').href = `mailto:${columns[6].trim()}`;
@@ -126,14 +132,20 @@
                 }
               }
             })
-            .catch(err => console.error("Chyba CSV:", err));
+            .catch(err => console.error("Chyba pri načítaní CSV:", err));
         }
       });
 
+      // PREPÍNAČ MEDZI UČITEĽOM A INFO PANELOM (Teraz prepína aj spodné tlačidlá)
       AFRAME.registerComponent('logo-interact', {
         init: function () {
           this.el.addEventListener('click', () => {
+            // AR prvky
             const infoPanel = document.querySelector('#info-panel');
+            const menoText = document.querySelector('#ar-meno');
+            const podkladMena = document.querySelector('#podklad-mena');
+            
+            // HTML prvky na displeji
             const tlacitkaKontakt = document.getElementById('contact-buttons');
             const btnScan = document.getElementById('scan-button');
             const btnWeb = document.getElementById('web-button');
@@ -141,43 +153,70 @@
             const isVisible = infoPanel.getAttribute('visible');
             
             if (isVisible) {
+              // NÁVRAT K UČITEĽOVI: Skry panel, ukáž meno, ukáž kontakt a skener
               infoPanel.setAttribute('visible', false);
+              menoText.setAttribute('visible', true);
+              podkladMena.setAttribute('visible', true);
+              
               tlacitkaKontakt.style.display = 'flex';
-              btnScan.style.display = 'block';
-              btnWeb.style.display = 'none';
+              btnScan.style.display = 'block'; // Zobraziť skener
+              btnWeb.style.display = 'none';   // Skryť web
             } else {
+              // ZOBRAZENIE KATEDRY: Ukáž panel, skry meno, skry kontakt a skener
               infoPanel.setAttribute('visible', true);
+              menoText.setAttribute('visible', false);
+              podkladMena.setAttribute('visible', false);
+              
               tlacitkaKontakt.style.display = 'none';
-              btnScan.style.display = 'none';
-              btnWeb.style.display = 'block';
+              btnScan.style.display = 'none';  // Skryť skener
+              btnWeb.style.display = 'block';  // Zobraziť web
             }
           });
         }
       });
 
+      // AUTOMATICKÁ PREZENTÁCIA FOTIEK (Slideshow)
       AFRAME.registerComponent('slideshow', {
-        schema: { fotky: {type: 'array'}, interval: {type: 'number', default: 3000} },
+        schema: {
+          fotky: {type: 'array', default: []}, 
+          interval: {type: 'number', default: 3000} 
+        },
         init: function () {
           this.index = 0;
           this.el.setAttribute('src', this.data.fotky[this.index]);
+          
           this.timer = setInterval(() => {
             this.index = (this.index + 1) % this.data.fotky.length;
             this.el.setAttribute('src', this.data.fotky[this.index]);
           }, this.data.interval);
+        },
+        remove: function () {
+          clearInterval(this.timer);
         }
       });
 
       let html5QrCode;
+
       function openScanner() {
         document.getElementById('qr-overlay').style.display = 'flex';
         html5QrCode = new Html5Qrcode("qr-reader");
-        html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (decodedText) => {
-          window.location.href = decodedText;
-        });
+        
+        html5QrCode.start(
+          { facingMode: "environment" }, 
+          { fps: 10, qrbox: 250 },
+          (decodedText) => {
+            window.location.href = decodedText;
+          }
+        ).catch(err => console.error("Chyba skenera:", err));
       }
+
       function closeScanner() {
         if (html5QrCode) {
-          html5QrCode.stop().then(() => { document.getElementById('qr-overlay').style.display = 'none'; });
+          html5QrCode.stop().then(() => {
+            document.getElementById('qr-overlay').style.display = 'none';
+          });
+        } else {
+          document.getElementById('qr-overlay').style.display = 'none';
         }
       }
     </script>
@@ -186,6 +225,7 @@
   <body style="margin: 0; overflow: hidden;">
 
     <button id="scan-button" onclick="openScanner()">Skenovať ďalšiu vizitku</button>
+    
     <a id="web-button" href="https://kti.aos.sk/index.php" target="_blank">Webstránka katedry</a>
 
     <div id="contact-buttons">
@@ -194,32 +234,33 @@
     </div>
 
     <div id="qr-overlay">
-      <h3 style="color:white; font-family: sans-serif;">Naskenujte QR kód</h3>
+      <h3 style="color:white;">Naskenujte QR kod</h3>
       <div id="qr-reader"></div>
       <button class="close-btn" onclick="closeScanner()">Zavrieť</button>
     </div>
 
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" vcard-logic>
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind; filterMinCF: 0.0001; filterBeta: 0.001;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" vcard-logic>
       
       <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="objects: .clickable; far: 10000;"></a-camera>
       
       <a-entity mindar-image-target="targetIndex: 0">
         
-        <a-entity position="0.6 0.85 0">
-          <a-circle src="./fotkyKatedra/david.png" radius="0.18"></a-circle>
-          <a-text id="ar-meno" value="Načítavam..." color="#FFFFFF" align="left" position="0.22 0.08 0.05" width="2.2" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
-          <a-text value="Katedra Informatiky" color="#00FF00" align="left" position="0.22 -0.05 0.05" width="1.6" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+        <a-plane id="podklad-mena" position="0 0.85 0" width="1.2" height="0.3" color="#111111" opacity="0.9"></a-plane>
+        <a-text id="ar-meno" value="Nacitavam..." color="#00FF00" position="-0.55 0.85 0.05" width="2.5" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+
+        <a-entity position="-0.8 1.0 0.2" animation__float="property: position; from: -0.8 0.95 0.2; to: -0.8 1.05 0.2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
+            <a-gltf-model src="./logokti.glb" scale="1 1 1" position="0 0 0"></a-gltf-model>
+            <a-box class="clickable" logo-interact scale="1 1 0.25" position="0 0 0" material="opacity: 0.0; transparent: true; depthWrite: false;"></a-box>
         </a-entity>
 
-        <a-entity position="0 -0.6 0.2" animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear">
-            <a-gltf-model src="./logokti.glb" scale="1.3 1.3 1.3" class="clickable" logo-interact></a-gltf-model>
-        </a-entity>
-
-        <a-entity id="info-panel" visible="false" position="-0.75 0 0.1" scale="0.65 0.65 0.65">
-          <a-plane position="0 0 0" width="1.8" height="1.6" color="#002200" opacity="0.95"></a-plane>
+        <a-entity id="info-panel" visible="false" position="0 0.0 0.1">
+          <a-plane position="0 0 0" width="1.8" height="1.6" color="#002200" opacity="0.95" material="transparent: true; border: 2px solid #00FF00;"></a-plane>
+          
           <a-text value="KATEDRA INFORMATIKY" color="#00FF00" align="center" position="0 0.65 0.05" width="3" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
-          <a-text value="- Kybernetická bezpečnosť\n- Programovanie a siete\n- Vojenské informačné systémy" color="#FFFFFF" align="left" position="-0.8 0.2 0.05" width="1.6" wrap-count="28" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+          <a-text value="- Kyberneticka bezpecnost\n- Programovanie a siete\n- Vojenske informacne systemy\n\nKlikni znova na logo pre navrat." color="#FFFFFF" align="left" position="-0.8 0.2 0.05" width="1.6" wrap-count="28" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+
           <a-image position="0 -0.4 0.05" width="1.2" height="0.6" slideshow="fotky: ./fotkyKatedra/KtI_1.jpg, ./fotkyKatedra/KtI_2.jpg, ./fotkyKatedra/KtI_3.jpg, ./fotkyKatedra/KtI_4.jpg, ./fotkyKatedra/KtI_5.jpg, ./fotkyKatedra/KtI_6.jpg; interval: 3000"></a-image>
+
         </a-entity>
 
       </a-entity>
