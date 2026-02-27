@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="UTF-8">
-    <title>AR Vizitka</title>
+    <title>AR Vizitka - Katedra Informatiky</title>
     
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
@@ -81,6 +81,7 @@
         box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
         text-align: center;
       }
+
       /* PREPÚŠŤANIE KLIKNUTÍ DO 3D PRIESTORU */
       .mindar-ui-overlay {
         pointer-events: none;
@@ -98,7 +99,7 @@
       const currentID = urlParams.get('id');
       const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQ-SFdCTOWEviIYJZSk0mwkyh6li8dnKCQB_LnLvrwEZklXjggD67hqnsx0kBIxoEUZoiqDNp_gfWF/pub?output=csv";
 
-      // LOGIKA PRE NAČÍTANIE DÁT
+      // LOGIKA PRE NAČÍTANIE DÁT Z TABUĽKY
       AFRAME.registerComponent('vcard-logic', {
         init: function () {
           if (!currentID) return;
@@ -132,18 +133,36 @@
         }
       });
 
-    
-      // TESTOVACÍ SKRIPT NA KLIKNUTIE (Vylepšený pre mobily)
-      // ULTIMÁTNY TESTOVACÍ SKRIPT
-      AFRAME.registerComponent('test-klik', {
+      // PREPÍNAČ MEDZI UČITEĽOM A INFO PANELOM (Interakcia s logom)
+      AFRAME.registerComponent('logo-interact', {
         init: function () {
           this.el.addEventListener('click', () => {
-            alert("BINGO!!! Kliknutie konečne funguje!");
+            const infoPanel = document.querySelector('#info-panel');
+            const menoText = document.querySelector('#ar-meno');
+            const podkladMena = document.querySelector('#podklad-mena');
+            const tlacitka = document.getElementById('contact-buttons');
+            
+            // Zistíme, či je panel momentálne viditeľný
+            const isVisible = infoPanel.getAttribute('visible');
+            
+            if (isVisible) {
+              // Ak je viditeľný, SKRY ho a vráť učiteľa
+              infoPanel.setAttribute('visible', false);
+              menoText.setAttribute('visible', true);
+              podkladMena.setAttribute('visible', true);
+              tlacitka.style.display = 'flex';
+            } else {
+              // Ak je skrytý, UKÁŽ ho a skry učiteľa
+              infoPanel.setAttribute('visible', true);
+              menoText.setAttribute('visible', false);
+              podkladMena.setAttribute('visible', false);
+              tlacitka.style.display = 'none';
+            }
           });
         }
       });
 
-      // LOGIKA PRE SKENER
+      // LOGIKA PRE SKENER QR KÓDOV
       let html5QrCode;
 
       function openScanner() {
@@ -186,24 +205,30 @@
     </div>
 
     <a-scene mindar-image="imageTargetSrc: ./targets.mind; filterMinCF: 0.0001; filterBeta: 0.001;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" vcard-logic>
-    <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="objects: .clickable; far: 10000;"></a-camera>
+      
+      <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="objects: .clickable; far: 10000;"></a-camera>
       
       <a-entity mindar-image-target="targetIndex: 0">
         
-        <a-plane position="0 0.85 0" width="1.2" height="0.3" color="#111111" opacity="0.9"></a-plane>
-        
+        <a-plane id="podklad-mena" position="0 0.85 0" width="1.2" height="0.3" color="#111111" opacity="0.9"></a-plane>
         <a-text id="ar-meno" value="Nacitavam..." color="#00FF00" position="-0.55 0.85 0.05" width="2.5"></a-text>
 
-        <a-entity position="0.8 1.0 0.2"
-                  animation__float="property: position; from: 0.8 0.95 0.2; to: 0.8 1.05 0.2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
+        <a-entity position="0.8 1.0 0.2" animation__float="property: position; from: 0.8 0.95 0.2; to: 0.8 1.05 0.2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
             
             <a-gltf-model src="./logokti.glb" scale="1.5 1.5 1.5" position="0 0 0"></a-gltf-model>
 
-           <a-box class="clickable" test-klik scale="1.5 1.5 0.5" position="0 0 0" color="red" material="opacity: 0.5; transparent: true; depthWrite: false;"></a-box>
+            <a-box class="clickable" logo-interact scale="1.5 1.5 0.5" position="0 0 0" material="opacity: 0.0; transparent: true; depthWrite: false;"></a-box>
             
+        </a-entity>
+
+        <a-entity id="info-panel" visible="false" position="0 0.2 0.1">
+          <a-plane position="0 0 0" width="1.8" height="1.0" color="#002200" opacity="0.95" material="transparent: true; border: 2px solid #00FF00;"></a-plane>
+          <a-text value="KATEDRA INFORMATIKY" color="#00FF00" align="center" position="0 0.35 0.05" width="3" font="exo2bold"></a-text>
+          <a-text value="- Kyberneticka bezpecnost\n- Programovanie a siete\n- Vojenske informacne systemy\n\nKlikni znova na logo pre navrat." color="#FFFFFF" align="left" position="-0.8 -0.1 0.05" width="1.6" wrap-count="28"></a-text>
         </a-entity>
 
       </a-entity>
     </a-scene>
+
   </body>
 </html>
