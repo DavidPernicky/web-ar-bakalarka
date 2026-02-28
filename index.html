@@ -125,6 +125,8 @@
                   const plneMeno = `${columns[1]} ${columns[2]} ${columns[3]} ${columns[4]}`.trim();
                   
                   document.querySelector('#ar-meno').setAttribute('value', plneMeno);
+                  const telNum = columns[5].trim();
+                  const mailAddr = columns[6].trim();
                   document.getElementById('btn-volat').href = `tel:${columns[5].trim()}`;
                   document.getElementById('btn-pisat').href = `mailto:${columns[6].trim()}`;
                   document.getElementById('contact-buttons').style.display = 'flex';
@@ -239,15 +241,15 @@
 
     <a-scene mindar-image="imageTargetSrc: ./targets.mind; filterMinCF: 0.0001; filterBeta: 0.001;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" vcard-logic>
       
-    <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="objects: .clickable; far: 10000;"></a-camera>
+      <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="objects: .clickable; far: 10000;"></a-camera>
 
-    <a-entity mindar-image-target="targetIndex: 0">
+      <a-entity mindar-image-target="targetIndex: 0">
         
-        <a-plane position="0 0 0" width="1" height="0.6" color="#000000" opacity="0.9">
-           <a-text id="ar-meno" value="Načítavam..." color="#00FF00" align="center" position="0 0.15 0.02" width="1.8" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+          <a-plane position="0 0 0" width="1" height="0.6" color="#000000" opacity="0.9">
+            <a-text id="ar-meno" value="Načítavam..." color="#00FF00" align="center" position="0 0.15 0.02" width="1.8" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
            
-           <a-text value="Katedra Informatiky\nAkadémia ozbrojených síl" color="#FFFFFF" align="center" position="0 -0.05 0.02" width="1.2" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
-        </a-plane>
+            <a-text value="Katedra Informatiky\nAkadémia ozbrojených síl" color="#FFFFFF" align="center" position="0 -0.05 0.02" width="1.2" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+          </a-plane>
 
         <a-entity position="0 0.5 0.1">
            <a-circle src="./fotkyKatedra/david.png" radius="0.15" border="color: #00FF00; width: 2"></a-circle>
@@ -278,6 +280,6 @@
         </a-entity>
 
       </a-entity>
-
+    </a-scene>
   </body>
 </html>
