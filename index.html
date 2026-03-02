@@ -246,14 +246,15 @@
       <a-entity mindar-image-target="targetIndex: 0">
         
           <a-plane position="0 0 0" width="1" height="0.6" color="#000000" opacity="0.9">
+            <a-circle src="./fotkyKatedra/david.png" radius="0.15" border="color: #00FF00; width: 2"></a-circle>
             <a-text id="ar-meno" value="Načítavam..." color="#00FF00" align="center" position="0 0.15 0.02" width="1.8" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
-           
-            <a-text value="Katedra Informatiky\nAkadémia ozbrojených síl" color="#FFFFFF" align="center" position="0 -0.05 0.02" width="1.2" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
           </a-plane>
 
-        <a-entity position="0 0.5 0.1">
+          
+          <!-- <a-entity position="0 0.5 0.1">
            <a-circle src="./fotkyKatedra/david.png" radius="0.15" border="color: #00FF00; width: 2"></a-circle>
         </a-entity>
+         -->
 
         <a-entity position="0 0.9 0.2" animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear">
             <a-gltf-model src="./logokti.glb" scale="1 1 1" class="clickable" logo-interact></a-gltf-model>
