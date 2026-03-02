@@ -11,95 +11,25 @@
 
     <style>
       #scan-button {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1000;
-        padding: 15px 25px;
-        background-color: #00FF00;
-        color: black;
-        border: none;
-        border-radius: 30px;
-        font-weight: bold;
-        text-transform: uppercase;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
-        cursor: pointer;
+        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+        z-index: 1000; padding: 15px 25px; background-color: #00FF00;
+        color: black; border: none; border-radius: 30px; font-weight: bold;
+        text-transform: uppercase; box-shadow: 0px 4px 10px rgba(0,0,0,0.5); cursor: pointer;
       }
-
       #qr-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.95);
-        z-index: 2000;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column;
+        align-items: center; justify-content: center;
       }
-
-      #qr-reader {
-        width: 80%;
-        max-width: 300px;
-        border: 2px solid #00FF00;
-      }
-
-      .close-btn {
-        margin-top: 20px;
-        padding: 10px 20px;
-        background: red;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      #contact-buttons {
-        position: fixed;
-        bottom: 80px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1000;
-        display: none; 
-        gap: 15px;
-        font-family: sans-serif;
-      }
-
-      .contact-btn {
-        padding: 12px 20px;
-        background-color: #008CBA;
-        color: white;
-        text-decoration: none;
-        border-radius: 25px;
-        font-weight: bold;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
-        text-align: center;
-      }
-      /* Tlačidlo pre web katedry (Zobrazí sa len pri paneli katedry) */
+      #qr-reader { width: 80%; max-width: 300px; border: 2px solid #00FF00; }
+      .close-btn { margin-top: 20px; padding: 10px 20px; background: red; color: white; border: none; border-radius: 5px; cursor: pointer; }
       #web-button {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1000;
-        padding: 15px 25px;
-        background-color: #008CBA;
-        color: white;
-        text-decoration: none;
-        border-radius: 30px;
-        font-weight: bold;
-        text-transform: uppercase;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
-        cursor: pointer;
-        display: none; /* Na začiatku je skryté, kým neklikneš na logo */
-        white-space: nowrap;
+        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+        z-index: 1000; padding: 15px 25px; background-color: #008CBA; color: white;
+        text-decoration: none; border-radius: 30px; font-weight: bold;
+        text-transform: uppercase; box-shadow: 0px 4px 10px rgba(0,0,0,0.5); display: none; white-space: nowrap;
       }
-
-      .mindar-ui-overlay { pointer-events: none; }
-      .mindar-ui-loading { pointer-events: none; }
+      .mindar-ui-overlay, .mindar-ui-loading { pointer-events: none; }
       .a-canvas { pointer-events: auto !important; }
     </style>
 
@@ -111,25 +41,21 @@
       AFRAME.registerComponent('vcard-logic', {
         init: function () {
           if (!currentID) return;
-
           fetch(csvUrl)
             .then(response => response.arrayBuffer()) 
             .then(buffer => {
               const decoder = new TextDecoder('utf-8');
               const csvText = decoder.decode(buffer);
-              
               const rows = csvText.split('\n');
               for (let i = 1; i < rows.length; i++) {
                 const columns = rows[i].split(',');
                 if (columns[0] && columns[0].trim() === currentID) {
                   const plneMeno = `${columns[1]} ${columns[2]} ${columns[3]} ${columns[4]}`.trim();
-                  
                   document.querySelector('#ar-meno').setAttribute('value', plneMeno);
-                  const telNum = columns[5].trim();
-                  const mailAddr = columns[6].trim();
-                  document.getElementById('btn-volat').href = `tel:${columns[5].trim()}`;
-                  document.getElementById('btn-pisat').href = `mailto:${columns[6].trim()}`;
-                  document.getElementById('contact-buttons').style.display = 'flex';
+                  
+                  // Zapíšeme dáta z tabuľky do skrytých liniek pre 3D tlačidlá
+                  document.getElementById('hidden-tel').href = `tel:${columns[5].trim()}`;
+                  document.getElementById('hidden-mail').href = `mailto:${columns[6].trim()}`;
                   break;
                 }
               }
@@ -138,100 +64,65 @@
         }
       });
 
-      // PREPÍNAČ MEDZI UČITEĽOM A INFO PANELOM (Teraz prepína aj spodné tlačidlá)
       AFRAME.registerComponent('logo-interact', {
         init: function () {
           this.el.addEventListener('click', () => {
-            // AR prvky
             const infoPanel = document.querySelector('#info-panel');
             const menoText = document.querySelector('#ar-meno');
-            
-            // HTML prvky na displeji
-            const tlacitkaKontakt = document.getElementById('contact-buttons');
             const btnScan = document.getElementById('scan-button');
             const btnWeb = document.getElementById('web-button');
-            
             const isVisible = infoPanel.getAttribute('visible');
             
             if (isVisible) {
-              // NÁVRAT K UČITEĽOVI: Skry panel, ukáž meno, ukáž kontakt a skener
               infoPanel.setAttribute('visible', false);
               menoText.setAttribute('visible', true);
-              
-              
-              tlacitkaKontakt.style.display = 'flex';
-              btnScan.style.display = 'block'; // Zobraziť skener
-              btnWeb.style.display = 'none';   // Skryť web
+              btnScan.style.display = 'block'; 
+              btnWeb.style.display = 'none';   
             } else {
-              // ZOBRAZENIE KATEDRY: Ukáž panel, skry meno, skry kontakt a skener
               infoPanel.setAttribute('visible', true);
               menoText.setAttribute('visible', false);
-              
-              tlacitkaKontakt.style.display = 'none';
-              btnScan.style.display = 'none';  // Skryť skener
-              btnWeb.style.display = 'block';  // Zobraziť web
+              btnScan.style.display = 'none'; 
+              btnWeb.style.display = 'block'; 
             }
           });
         }
       });
 
-      // AUTOMATICKÁ PREZENTÁCIA FOTIEK (Slideshow)
       AFRAME.registerComponent('slideshow', {
-        schema: {
-          fotky: {type: 'array', default: []}, 
-          interval: {type: 'number', default: 3000} 
-        },
+        schema: { fotky: {type: 'array', default: []}, interval: {type: 'number', default: 3000} },
         init: function () {
           this.index = 0;
           this.el.setAttribute('src', this.data.fotky[this.index]);
-          
           this.timer = setInterval(() => {
             this.index = (this.index + 1) % this.data.fotky.length;
             this.el.setAttribute('src', this.data.fotky[this.index]);
           }, this.data.interval);
         },
-        remove: function () {
-          clearInterval(this.timer);
-        }
+        remove: function () { clearInterval(this.timer); }
       });
 
       let html5QrCode;
-
       function openScanner() {
         document.getElementById('qr-overlay').style.display = 'flex';
         html5QrCode = new Html5Qrcode("qr-reader");
-        
-        html5QrCode.start(
-          { facingMode: "environment" }, 
-          { fps: 10, qrbox: 250 },
-          (decodedText) => {
-            window.location.href = decodedText;
-          }
-        ).catch(err => console.error("Chyba skenera:", err));
+        html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (decodedText) => {
+          window.location.href = decodedText;
+        }).catch(err => console.error("Chyba skenera:", err));
       }
-
       function closeScanner() {
-        if (html5QrCode) {
-          html5QrCode.stop().then(() => {
-            document.getElementById('qr-overlay').style.display = 'none';
-          });
-        } else {
-          document.getElementById('qr-overlay').style.display = 'none';
-        }
+        if (html5QrCode) { html5QrCode.stop().then(() => { document.getElementById('qr-overlay').style.display = 'none'; }); } 
+        else { document.getElementById('qr-overlay').style.display = 'none'; }
       }
     </script>
   </head>
   
   <body style="margin: 0; overflow: hidden;">
 
-    <button id="scan-button" onclick="openScanner()">Skenovať ďalšiu vizitku</button>
-    
-    <a id="web-button" href="https://kti.aos.sk/index.php" target="_blank">Webstránka katedry</a>
+    <a id="hidden-tel" href="#" style="display:none;"></a>
+    <a id="hidden-mail" href="#" style="display:none;"></a>
 
-    <div id="contact-buttons">
-      <a id="btn-volat" href="#" class="contact-btn">📞</a>
-      <a id="btn-pisat" href="#" class="contact-btn">✉️</a>
-    </div>
+    <button id="scan-button" onclick="openScanner()">Skenovať ďalšiu vizitku</button>
+    <a id="web-button" href="https://kti.aos.sk/index.php" target="_blank">Webstránka katedry</a>
 
     <div id="qr-overlay">
       <h3 style="color:white;">Naskenujte QR kod</h3>
@@ -246,39 +137,33 @@
       <a-entity mindar-image-target="targetIndex: 0">
         
           <a-plane position="0 0 0" width="1" height="0.6" color="#000000" opacity="0.9">
-            <a-circle src="./fotkyKatedra/david.png" radius="0.15" border="color: #00FF00; width: 2"></a-circle>
-            <a-text id="ar-meno" value="Načítavam..." color="#00FF00" align="center" position="0 0.15 0.02" width="1.8" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+            <a-circle src="./fotkyKatedra/david.png" radius="0.12" position="0 0.12 0.02" border="color: #00FF00; width: 2"></a-circle>
+            <a-text id="ar-meno" value="Načítavam..." color="#00FF00" align="center" position="0 -0.1 0.02" width="1.8" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
           </a-plane>
 
-          
-          <!-- <a-entity position="0 0.5 0.1">
-           <a-circle src="./fotkyKatedra/david.png" radius="0.15" border="color: #00FF00; width: 2"></a-circle>
-        </a-entity>
-         -->
+          <a-entity position="0 0.8 0.2" animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear">
+              <a-gltf-model src="./logokti.glb" scale="1 1 1" class="clickable" logo-interact></a-gltf-model>
+          </a-entity>
 
-        <a-entity position="0 0.9 0.2" animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear">
-            <a-gltf-model src="./logokti.glb" scale="1 1 1" class="clickable" logo-interact></a-gltf-model>
-        </a-entity>
+          <a-entity position="0 -0.5 0">
+             <a-entity position="-0.25 0 0" class="clickable" onclick="document.getElementById('hidden-tel').click()">
+               <a-circle radius="0.1" color="#00FF00" opacity="0.9">
+                 <a-text value="VOLAŤ" color="black" align="center" width="1.2" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+               </a-circle>
+             </a-entity>
 
-        <a-entity position="0 -0.5 0">
-           <a-entity position="-0.25 0 0" class="clickable" onclick="window.location.href='tel:0900000000'">
-             <a-circle radius="0.1" color="#00FF00" opacity="0.9">
-               <a-text value="VOLAŤ" color="black" align="center" width="1.2" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
-             </a-circle>
-           </a-entity>
+             <a-entity position="0.25 0 0" class="clickable" onclick="document.getElementById('hidden-mail').click()">
+               <a-circle radius="0.1" color="#008CBA" opacity="0.9">
+                 <a-text value="EMAIL" color="white" align="center" width="1.2" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+               </a-circle>
+             </a-entity>
+          </a-entity>
 
-           <a-entity position="0.25 0 0" class="clickable" onclick="window.location.href='mailto:test@aos.sk'">
-             <a-circle radius="0.1" color="#008CBA" opacity="0.9">
-               <a-text value="EMAIL" color="white" align="center" width="1.2" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
-             </a-circle>
-           </a-entity>
-        </a-entity>
-
-        <a-entity id="info-panel" visible="false" position="1.1 0 0.1" scale="0.7 0.7 0.7">
-          <a-plane width="1.8" height="1.6" color="#002200" opacity="0.95" material="border: 2px solid #00FF00;"></a-plane>
-          <a-text value="KATEDRA INFORMATIKY" color="#00FF00" align="center" position="0 0.65 0.05" width="3" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
-          <a-image position="0 -0.4 0.05" width="1.2" height="0.6" slideshow="fotky: ./fotkyKatedra/KtI_1.jpg, ./fotkyKatedra/KtI_2.jpg, ./fotkyKatedra/KtI_3.jpg, ./fotkyKatedra/KtI_4.jpg, ./fotkyKatedra/KtI_5.jpg, ./fotkyKatedra/KtI_6.jpg; interval: 3000"></a-image>
-        </a-entity>
+          <a-entity id="info-panel" visible="false" position="1.1 0 0.1" scale="0.7 0.7 0.7">
+            <a-plane width="1.8" height="1.6" color="#002200" opacity="0.95" material="border: 2px solid #00FF00;"></a-plane>
+            <a-text value="KATEDRA INFORMATIKY" color="#00FF00" align="center" position="0 0.65 0.05" width="3" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+            <a-image position="0 -0.4 0.05" width="1.2" height="0.6" slideshow="fotky: ./fotkyKatedra/KtI_1.jpg, ./fotkyKatedra/KtI_2.jpg, ./fotkyKatedra/KtI_3.jpg, ./fotkyKatedra/KtI_4.jpg, ./fotkyKatedra/KtI_5.jpg, ./fotkyKatedra/KtI_6.jpg; interval: 3000"></a-image>
+          </a-entity>
 
       </a-entity>
     </a-scene>
