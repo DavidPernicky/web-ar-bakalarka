@@ -34,6 +34,22 @@
     </style>
 
     <script>
+      // OVLÁDAČ PRE 3D TLAČIDLÁ (Volanie a Email)
+      AFRAME.registerComponent('button-interact', {
+        init: function () {
+          this.el.addEventListener('click', () => {
+            if (this.el.id === 'btn-3d-volat') {
+              // Ak sme klikli na volanie, stlačíme skrytý odkaz
+              document.getElementById('hidden-tel').click();
+            } else if (this.el.id === 'btn-3d-email') {
+              // Ak sme klikli na email, stlačíme skrytý odkaz
+              document.getElementById('hidden-mail').click();
+            }
+          });
+        }
+      });
+
+
       const urlParams = new URLSearchParams(window.location.search);
       const currentID = urlParams.get('id');
       const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQ-SFdCTOWEviIYJZSk0mwkyh6li8dnKCQB_LnLvrwEZklXjggD67hqnsx0kBIxoEUZoiqDNp_gfWF/pub?output=csv";
@@ -146,13 +162,13 @@
           </a-entity>
 
           <a-entity position="0 -0.5 0">
-             <a-entity position="-0.25 0 0" class="clickable" onclick="document.getElementById('hidden-tel').click()">
+             <a-entity id="btn-3d-volat" position="-0.25 0 0" class="clickable" button-interact>
                <a-circle radius="0.1" color="#00FF00" opacity="0.9">
                  <a-text value="VOLAŤ" color="black" align="center" width="1.2" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
                </a-circle>
              </a-entity>
 
-             <a-entity position="0.25 0 0" class="clickable" onclick="document.getElementById('hidden-mail').click()">
+             <a-entity id="btn-3d-email" position="0.25 0 0" class="clickable" button-interact>
                <a-circle radius="0.1" color="#008CBA" opacity="0.9">
                  <a-text value="EMAIL" color="white" align="center" width="1.2" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
                </a-circle>
