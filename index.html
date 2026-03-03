@@ -84,10 +84,14 @@
             
             if (isVisible) {
               infoPanel.setAttribute('visible', false);
+              profilSekcia.setAttribute('visible', true);
+              akcieSekcia.setAttribute('visible', true);
               btnScan.style.display = 'block';
               btnWeb.style.display = 'none';
             } else {
               infoPanel.setAttribute('visible', true);
+              profilSekcia.setAttribute('visible', false);
+              akcieSekcia.setAttribute('visible', false);
               btnScan.style.display = 'none';
               btnWeb.style.display = 'block';
             }
@@ -148,7 +152,7 @@
 
       <a-entity mindar-image-target="targetIndex: 0">
         
-          <a-entity position="0 -0.5 0">
+          <a-entity id="profil-sekcia" position="0 -0.5 0">
              <a-circle src="./fotkyKatedra/david.png" radius="0.15" position="-0.25 0 0.1"></a-circle>
              <a-entity position="0.05 0 0.1">
                 <a-text id="ar-meno" value="Meno" color="#FFFFFF" align="left" position="0 0.08 0" width="2" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
@@ -160,7 +164,7 @@
               <a-gltf-model src="./logokti.glb" scale="1 1 1" class="clickable" logo-interact></a-gltf-model>
           </a-entity>
 
-          <a-entity position="0 -0.9 0">
+          <a-entity id="akcie-sekcia" position="0 -0.9 0">
              
              <a-circle id="kruh-volat" position="-0.36 0 0.05" radius="0.1" color="#FFFFFF" opacity="0.9" class="clickable" akcia-tlacidla data-url="">
                <a-image src="./tlacidla/telephone.png" width="0.12" height="0.12" position="0 0 0.01" material="alphaTest: 0.5; transparent: true; shader: flat"></a-image>
