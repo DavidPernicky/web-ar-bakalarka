@@ -196,14 +196,30 @@
 
           </a-entity>
 
-          <a-entity id="info-panel" visible="false" position="0 -0.1 0.05" scale="0 0 0"
-                    animation__open="property: scale; to: 0.55 0.55 0.55; dur: 500; startEvents: openPanel; easing: easeOutElastic"
-                    animation__close="property: scale; to: 0 0 0; dur: 300; startEvents: closePanel; easing: easeInBack">
+         <a-entity id="info-panel" visible="false" position="0 -0.1 0.05" scale="0 0 0"
+            animation__open="property: scale; to: 0.55 0.55 0.55; dur: 500; startEvents: openPanel; easing: easeOutElastic"
+            animation__close="property: scale; to: 0 0 0; dur: 300; startEvents: closePanel; easing: easeInBack">
 
             <a-plane width="2.4" height="2.4" color="#000000" opacity="0.95" material="border: 2px solid #00FF00;"></a-plane>
-            <a-text value="KATEDRA INFORMATIKY" color="#FFFFFF" align="center" position="0 0.65 0.05" width="3" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
-            <a-text value="Katedra informatiky AOS zabezpečuje komplexné vzdelávanie a vedecký výskum v oblasti IKT a matematiky so špeciálnym zameraním na potreby Ozbrojených síl SR." color="#FFFFFF" align="left"  width="1.6" wrap-count="28" font="./Exo2-Medium-msdf.json" negate="false" position="0 0.15 0.05"></a-text>
-            <a-image position="0 -0.4 0.05" width="1.2" height="0.6" slideshow="fotky: ./fotkyKatedra/KtI_1.jpg, ./fotkyKatedra/KtI_2.jpg, ./fotkyKatedra/KtI_3.jpg, ./fotkyKatedra/KtI_4.jpg, ./fotkyKatedra/KtI_5.jpg, ./fotkyKatedra/KtI_6.jpg; interval: 3000"></a-image>
+
+            <a-text value="KATEDRA INFORMATIKY" color="#00FF00" allign="center" position="0 1.0 0.05" width="4" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+
+            <a-text value="Katedra informatiky AOS zabezpečuje komplexné vzdelávanie a vedecký výskum v oblasti IKT a matematiky so špeciálnym zameraním na potreby Ozbrojených síl SR. \n\nZameriavame sa na kybernetickú bezpečnosť, počítačové siete a vývoj softvéru." 
+              color="#FFFFFF" 
+             allign="left"  
+              width="2.0" 
+             wrap-count="45" 
+              position="0 0.4 0.05" 
+              font="./Exo2-Medium-msdf.json" 
+              negate="false">
+            </a-text>
+
+           <a-image position="0 -0.4 0.05" width="1.8" height="0.9" 
+             slideshow="fotky: ./fotkyKatedra/KtI_1.jpg, ./fotkyKatedra/KtI_2.jpg, ./fotkyKatedra/KtI_3.jpg, ./fotkyKatedra/KtI_4.jpg, ./fotkyKatedra/KtI_5.jpg, ./fotkyKatedra/KtI_6.jpg; interval: 3000">
+            </a-image>
+
+            <a-text value="Klikni na logo pre návrat" color="#888" align="center" position="0 -1.0 0.05" width="1.5" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+
           </a-entity>
 
       </a-entity>
