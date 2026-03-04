@@ -144,10 +144,41 @@
       function closeScanner() {
         if (html5QrCode) { html5QrCode.stop().then(() => { document.getElementById('qr-overlay').style.display = 'none'; }); }
       }
+
+      AFRAME.registerComponent('video-handler', {
+  init: function () {
+    const video = document.querySelector('#prelet-video');
+    
+    // Spustí video, keď je cieľ nájdený
+    this.el.sceneEl.addEventListener('targetFound', (event) => {
+        // Kontrola, či ide o správny target (index 1)
+        if(event.detail.targetIndex === 1) {
+            video.play();
+        }
+    });
+
+    // Zastaví video pri strate vizitky z dohľadu
+    this.el.sceneEl.addEventListener('targetLost', (event) => {
+        if(event.detail.targetIndex === 1) {
+            video.pause();
+        }
+    });
+
+    // Možnosť manuálneho spustenia kliknutím
+    this.el.addEventListener('click', () => {
+        video.play();
+    });
+  }
+});
     </script>
   </head>
   
   <body style="margin: 0; overflow: hidden;">
+    <a-assets>
+    <video id="prelet-video" src="./AOS.mp4" 
+           preload="auto" loop="true" muted playsinline webkit-playsinline>
+    </video>
+</a-assets>
 
     <button id="scan-button" onclick="openScanner()">Skenovať ďalšiu vizitku</button>
     <a id="web-button" href="https://kti.aos.sk/index.php" target="_blank">Webstránka katedry</a>
@@ -223,6 +254,24 @@
           </a-entity>
 
       </a-entity>
+      <a-entity mindar-image-target="targetIndex: 1">
+    
+        <a-video src="#prelet-video" 
+             width="1.2" height="0.675" 
+             position="0 0 0.01"
+             class="clickable"
+             video-handler> </a-video>
+
+        <a-text value="LOKALITA AOS" color="#00FF00" align="center" 
+            position="0 0.5 0.1" width="2.5" font="./Exo2-Medium-msdf.json" negate="false">
+        </a-text>
+
+        <a-text value="Ťukni na video pre opätovné spustenie" color="#FFFFFF" align="center" 
+            position="0 -0.45 0.1" width="1.2" font="./Exo2-Medium-msdf.json" negate="false">
+        </a-text>
+
+      </a-entity>
+
     </a-scene>
   </body>
 </html>
