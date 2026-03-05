@@ -147,7 +147,7 @@
 
       AFRAME.registerComponent('video-handler', {
   init: function () {
-    const btnWeb = document.getElementById('web-button');
+    
     const video = document.querySelector('#prelet-video');
     
     // Spustí video, keď je cieľ nájdený
@@ -258,19 +258,19 @@
       </a-entity>
       <a-entity mindar-image-target="targetIndex: 1; filterMinCF: 0.0001; filterBeta: 0.001; missTolerance: 30;">
     
-        <a-video src="#prelet-video" 
-             width="1.2" height="0.675" 
-             position="0 0 0.01"
-             class="clickable"
-             video-handler> </a-video>
+        <a-video src="#prelet-video" width="1.2" height="0.675" position="0 0 0.01" class="clickable" video-handler></a-video>
 
-        <a-text value="LOKALITA AOS" color="#FFFFFF" align="center" 
-            position="0 0.5 0.1" width="2.5" font="./Exo2-Medium-msdf.json" negate="false">
-        </a-text>
+        <a-text value="LOKALITA AOS" color="#00FF00" align="center" position="0 0.5 0.1" width="2.5" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
 
-        <a-text value="Ťukni na logo pre spustenie" color="#FFFFFF" align="center" 
-            position="0 -0.45 0.1" width="1.2" font="./Exo2-Medium-msdf.json" negate="false">
-        </a-text>
+        <a-text value="Ťukni na video pre pauzu/štart" color="#FFFFFF" align="center" position="0 -0.45 0.1" width="1.2" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+
+        <a-entity position="0 -0.75 0.1">
+            <a-plane width="0.8" height="0.2" color="#FFFFFF" class="clickable" 
+              akcia-tlacidla data-url="https://www.aos.sk"
+              animation__click="property: scale; from: 1 1 1; to: 0.9 0.9 0.9; dur: 100; startEvents: click">
+              <a-text value="OTVORIŤ WEB AOS" color="#000000" align="center" width="1.5" font="./Exo2-Medium-msdf.json" negate="false" position="0 0 0.01"></a-text>
+            </a-plane>
+        </a-entity>
 
       </a-entity>
 
