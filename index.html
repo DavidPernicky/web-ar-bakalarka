@@ -75,41 +75,50 @@
     });
 
       AFRAME.registerComponent('logo-interact', {
-        init: function () {
-          this.el.addEventListener('click', () => {
-            const infoPanel = document.querySelector('#info-panel');
-            const profilSekcia = document.querySelector('#profil-sekcia');
-            const akcieSekcia = document.querySelector('#akcie-sekcia');
-            const btnScan = document.getElementById('scan-button');
-            const btnWeb = document.getElementById('web-button');
-            
-            // Zisťujeme, či je panel momentálne otvorený (mierka > 0)
-            const currentScale = infoPanel.getAttribute('scale');
-            
-            if (infoPanel.getAttribute('visible') && currentScale.x > 0) {
-              // ZATVÁRANIE
-              infoPanel.emit('closePanel');
-              // Počkáme, kým skončí animácia zmenšenia, potom skryjeme úplne
-              setTimeout(() => {
-                infoPanel.setAttribute('visible', false);
-                profilSekcia.setAttribute('visible', true);
-                akcieSekcia.setAttribute('visible', true);
-                btnScan.style.display = 'block';
-                btnWeb.style.display = 'none';
-              }, 300);
-            } else {
-              // OTVÁRANIE
-              profilSekcia.setAttribute('visible', false);
-              akcieSekcia.setAttribute('visible', false);
-              btnScan.style.display = 'none';
-              btnWeb.style.display = 'block';
-              
-              infoPanel.setAttribute('visible', true);
-              infoPanel.emit('openPanel');
-            }
-          });
-        }
-      });
+  init: function () {
+    this.el.addEventListener('click', () => {
+      const infoPanel = document.querySelector('#info-panel');
+      const profilSekcia = document.querySelector('#profil-sekcia');
+      const akcieSekcia = document.querySelector('#akcie-sekcia');
+      const btnScan = document.getElementById('scan-button');
+      const btnWeb = document.getElementById('web-button');
+      
+      // Odkaz na obal loga, ktorý budeme posúvať
+      const logoContainer = document.querySelector('#logo-container');
+      
+      const isVisible = infoPanel.getAttribute('visible');
+      const currentScale = infoPanel.getAttribute('scale');
+
+      if (isVisible && currentScale.x > 0) {
+        // --- ZATVÁRANIE ---
+        infoPanel.emit('closePanel');
+        
+        // Logo sa vráti späť pod vizitku
+        logoContainer.setAttribute('animation', 'property: position; to: 0 -1.2 0.1; dur: 500; easing: easeInOutQuad');
+
+        setTimeout(() => {
+          infoPanel.setAttribute('visible', false);
+          profilSekcia.setAttribute('visible', true);
+          akcieSekcia.setAttribute('visible', true);
+          btnScan.style.display = 'block';
+          btnWeb.style.display = 'none';
+        }, 300);
+      } else {
+        // --- OTVÁRANIE ---
+        profilSekcia.setAttribute('visible', false);
+        akcieSekcia.setAttribute('visible', false);
+        btnScan.style.display = 'none';
+        btnWeb.style.display = 'block';
+        
+        // Logo sa odsunie ešte nižšie, aby nezavadzalo panelu
+        logoContainer.setAttribute('animation', 'property: position; to: 0 -1.8 0.1; dur: 500; easing: easeInOutQuad');
+
+        infoPanel.setAttribute('visible', true);
+        infoPanel.emit('openPanel');
+      }
+    });
+  }
+});
 
       AFRAME.registerComponent('akcia-tlacidla', {
         init: function () {
@@ -206,13 +215,17 @@
             </a-entity>
           </a-entity>
 
-          <a-entity position="0 -1 0.05">
-            <a-gltf-model src="./logokti.glb" 
-                      scale="0.8 0.8 0.8" 
+          <a-entity id="logo-container" position="0 -1.2 0.1">
+            <a-entity animation="property: rotation; to: 0 360 0; loop: true; dur: 4000; easing: linear">
+        
+              <a-gltf-model src="./logokti_centrovane.glb" 
+                      scale="1.2 1.2 1.2" 
+                      position="0 0 0" 
                       class="clickable" 
-                      logo-interact
-                      animation="property: rotation; to: 0 360 0; loop: true; dur: 3500; easing: linear">
-            </a-gltf-model>
+                      logo-interact>
+              </a-gltf-model>
+
+            </a-entity>
           </a-entity>
 
           <a-entity id="akcie-sekcia" position="0 -0.2 0.05">
