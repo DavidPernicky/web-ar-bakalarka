@@ -81,7 +81,7 @@
       const profilSekcia = document.querySelector('#profil-sekcia');
       const akcieSekcia = document.querySelector('#akcie-sekcia');
       const btnScan = document.getElementById('scan-button');
-      const btnWeb = document.getElementById('web-button');
+     
       
       // Odkaz na obal loga, ktorý budeme posúvať
       const logoContainer = document.querySelector('#logo-container');
@@ -101,14 +101,14 @@
           profilSekcia.setAttribute('visible', true);
           akcieSekcia.setAttribute('visible', true);
           btnScan.style.display = 'block';
-          btnWeb.style.display = 'none';
+          
         }, 300);
       } else {
         // --- OTVÁRANIE ---
         profilSekcia.setAttribute('visible', false);
         akcieSekcia.setAttribute('visible', false);
         btnScan.style.display = 'none';
-        btnWeb.style.display = 'block';
+        
         
         // Logo sa odsunie ešte nižšie, aby nezavadzalo panelu
         logoContainer.setAttribute('animation', 'property: position; to: 0 -1 0.1; dur: 500; easing: easeInOutQuad');
@@ -191,7 +191,6 @@
 </a-assets>
 
     <button id="scan-button" onclick="openScanner()">Skenovať ďalšiu vizitku</button>
-    <a id="web-button" href="https://kti.aos.sk/index.php" target="_blank">Webstránka katedry</a>
 
     <div id="qr-overlay">
       <h3 style="color:white; font-family: sans-serif;">Naskenujte QR kod</h3>
@@ -248,31 +247,34 @@
 
           </a-entity>
 
-         <a-entity id="info-panel" visible="false" position="0 -0.1 0.05" scale="0 0 0"
-            animation__open="property: scale; to: 0.55 0.55 0.55; dur: 500; startEvents: openPanel; easing: easeOutElastic"
-            animation__close="property: scale; to: 0 0 0; dur: 300; startEvents: closePanel; easing: easeInBack">
+        <a-entity id="info-panel" visible="false" position="0 -0.1 0.05" scale="0 0 0"
+          animation__open="property: scale; to: 0.55 0.55 0.55; dur: 500; startEvents: openPanel; easing: easeOutElastic"
+          animation__close="property: scale; to: 0 0 0; dur: 300; startEvents: closePanel; easing: easeInBack">
 
-            <a-plane width="2.4" height="2.4" color="#000000" opacity="0.95" material="border: 2px solid #00FF00;"></a-plane>
+          <a-plane width="2.4" height="2.4" color="#000000" opacity="0.95" material="border: 2px solid #00FF00;"></a-plane>
 
-            <a-text value="KATEDRA INFORMATIKY" color="#00FF00" align="center" position="0 1.0 0.05" width="4" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+          <a-text value="KATEDRA INFORMATIKY" color="#00FF00" align="center" position="0 1.0 0.05" width="4" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
 
-            <a-text value="Katedra informatiky AOS zabezpečuje komplexné vzdelávanie a vedecký výskum v oblasti IKT a matematiky so špeciálnym zameraním na potreby Ozbrojených síl SR.\nZameriavame sa na kybernetickú bezpečnosť, počítačové siete a vývoj softvéru." 
-              color="#FFFFFF" 
-             align="center"  
-              width="2.2" 
-             wrap-count="40" 
-              position="0 0.4 0.05" 
-              font="./Exo2-Medium-msdf.json" 
-              negate="false">
-            </a-text>
+          <a-text value="Katedra informatiky AOS zabezpečuje komplexné vzdelávanie a vedecký výskum v oblasti IKT a matematiky so špeciálnym zameraním na potreby Ozbrojených síl SR.\nZameriavame sa na kybernetickú bezpečnosť, počítačové siete a vývoj softvéru." 
+            color="#FFFFFF" align="center" width="2.2" wrap-count="40" position="0 0.4 0.05" font="./Exo2-Medium-msdf.json" negate="false">
+          </a-text>
 
-           <a-image position="0 -0.4 0.05" width="1.8" height="0.9" 
+          <a-image position="0 -0.3 0.05" width="1.8" height="0.9" 
              slideshow="fotky: ./fotkyKatedra/KtI_1.jpg, ./fotkyKatedra/KtI_2.jpg, ./fotkyKatedra/KtI_3.jpg, ./fotkyKatedra/KtI_4.jpg, ./fotkyKatedra/KtI_5.jpg, ./fotkyKatedra/KtI_6.jpg; interval: 3000">
-            </a-image>
+          </a-image>
 
-            <a-text value="Klikni na logo pre návrat" color="#888" align="center" position="0 -1.0 0.05" width="1.5" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
-
+          <a-entity position="0 -0.85 0.06"> 
+            <a-circle radius="0.15" color="#008CBA" class="clickable" 
+                akcia-tlacidla data-url="https://kti.aos.sk/index.php"
+                animation__click="property: scale; from: 1 1 1; to: 0.8 0.8 0.8; dur: 100; startEvents: click">
+              <a-image src="./tlacidla/global.png" width="0.18" height="0.18" position="0 0 0.01"></a-image>
+              <a-text value="WEB" color="#FFFFFF" align="center" position="0 -0.22 0.01" width="2" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+            </a-circle>
           </a-entity>
+
+          <a-text value="Klikni na logo pre návrat" color="#888" align="center" position="0 -1.1 0.05" width="1.5" font="./Exo2-Medium-msdf.json" negate="false"></a-text>
+
+        </a-entity>
 
       </a-entity>
       <a-entity mindar-image-target="targetIndex: 1; filterMinCF: 0.0001; filterBeta: 0.001; missTolerance: 30;">
