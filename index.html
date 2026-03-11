@@ -94,7 +94,7 @@
         infoPanel.emit('closePanel');
         
         // Logo sa vráti späť pod vizitku
-        logoContainer.setAttribute('animation', 'property: position; to: 0 -1.2 0.1; dur: 500; easing: easeInOutQuad');
+        logoContainer.setAttribute('animation', 'property: position; to: 0 -0.5 0.1; dur: 500; easing: easeInOutQuad');
 
         setTimeout(() => {
           infoPanel.setAttribute('visible', false);
@@ -111,7 +111,7 @@
         btnWeb.style.display = 'block';
         
         // Logo sa odsunie ešte nižšie, aby nezavadzalo panelu
-        logoContainer.setAttribute('animation', 'property: position; to: 0 -1.8 0.1; dur: 500; easing: easeInOutQuad');
+        logoContainer.setAttribute('animation', 'property: position; to: 0 -1 0.1; dur: 500; easing: easeInOutQuad');
 
         infoPanel.setAttribute('visible', true);
         infoPanel.emit('openPanel');
@@ -215,7 +215,7 @@
             </a-entity>
           </a-entity>
 
-          <a-entity id="logo-container" position="0 -1.2 0.1">
+          <a-entity id="logo-container" position="0 -0.5 0.1">
             <a-entity animation="property: rotation; to: 0 360 0; loop: true; dur: 4000; easing: linear">
         
               <a-gltf-model src="./logokti.glb" 
