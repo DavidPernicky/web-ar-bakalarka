@@ -206,8 +206,16 @@
             </a-entity>
           </a-entity>
 
-          <a-entity position=" 0.8 -0.1 0.2" animation__float="property: position; from: 0.8 -0.1 0.2; to: 0.8 0.25 0.2; dir: alternate; loop: true; dur: 2500; easing: easeInOutSine">
-              <a-gltf-model src="./logokti.glb" scale="1 1 1" class="clickable" logo-interact></a-gltf-model>
+          <a-entity position="0.4 0.2 0.1" 
+          animation="property: position; to: 0.4 0.25 0.1; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
+    
+            <a-gltf-model src="./logokti.glb" 
+                  scale="0.8 0.8 0.8" 
+                  class="clickable" 
+                  logo-interact
+                  animation="property: rotation; to: 0 360 0; loop: true; dur: 4000; easing: linear">
+            </a-gltf-model>
+
           </a-entity>
 
           <a-entity id="akcie-sekcia" position="0 -0.2 0.05">
