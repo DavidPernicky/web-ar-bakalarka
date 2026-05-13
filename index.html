@@ -44,20 +44,14 @@
             for (let i = 1; i < rows.length; i++) {
               const columns = rows[i].split(',');
               if (columns[0] && columns[0].trim() === currentID) {
-            // ... (predchádzajúce načítanie mena, priezviska, tel, mailu zostáva)
-                const fotoFile = columns[7].trim(); // Nový 8. stĺpec (index 7)
-
-            // Dynamicky nastavíme fotku
+            
+                const fotoFile = columns[7].trim(); 
                 const fotoElement = document.querySelector('#ar-foto');
                 if (fotoFile) {
                   fotoElement.setAttribute('src', `./fotkyKatedra/${fotoFile}`);
                 }
-
-            // Nastavenie textov (pôvodný kód)
                 document.querySelector('#ar-meno').setAttribute('value', `${columns[1]} ${columns[2]}`.trim());
-                document.querySelector('#ar-priezvisko').setAttribute('value', `${columns[3]} ${columns[4]}`.trim());
-            
-            // Linky na akcie (pôvodný kód)
+                document.querySelector('#ar-priezvisko').setAttribute('value', `${columns[3]} ${columns[4]} ${columns[8]}`.trim());
                 document.getElementById('kruh-volat').setAttribute('data-url', `tel:${columns[5].trim()}`);
                 document.getElementById('kruh-sms').setAttribute('data-url', `sms:${columns[5].trim()}`);
                 document.getElementById('kruh-email').setAttribute('data-url', `mailto:${columns[6].trim()}`);
