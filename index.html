@@ -45,17 +45,31 @@
               const columns = rows[i].split(',');
               if (columns[0] && columns[0].trim() === currentID) {
             
-                const fotoFile = columns[7].trim(); 
-                const fotoElement = document.querySelector('#ar-foto');
-                if (fotoFile) {
-                  fotoElement.setAttribute('src', `./fotkyKatedra/${fotoFile}`);
-                }
-                document.querySelector('#ar-meno').setAttribute('value', `${columns[1]} ${columns[2]}`.trim());
-                document.querySelector('#ar-priezvisko').setAttribute('value', `${columns[3]} ${columns[4]} ${columns[8]}`.trim());
-                document.getElementById('kruh-volat').setAttribute('data-url', `tel:${columns[5].trim()}`);
-                document.getElementById('kruh-sms').setAttribute('data-url', `sms:${columns[5].trim()}`);
-                document.getElementById('kruh-email').setAttribute('data-url', `mailto:${columns[6].trim()}`);
-                break;
+                const meno = columns[1].trim();
+                  const titPred = columns[2].trim();
+                  const priezvisko = columns[3].trim();
+                  const titZa = columns[4].trim();
+                  const tel = columns[5].trim();
+                  const email = columns[6].trim();
+                  const fotoFile = columns[7].trim(); 
+                  const funkcia = columns[8].trim();
+
+                  const menoFinal = `${titPred} ${meno}`.trim();
+                  const priezviskoFinal = `${priezvisko}${titZa ? ', ' + titZa : ''}`.trim();
+
+                  const fotoElement = document.querySelector('#ar-foto');
+                  if (fotoFile) {
+                    fotoElement.setAttribute('src', `./fotkyKatedra/${fotoFile}`);
+                  }
+                  
+                  document.querySelector('#ar-meno').setAttribute('value', menoFinal);
+                  document.querySelector('#ar-priezvisko').setAttribute('value', priezviskoFinal);
+                  document.querySelector('#ar-funkcia').setAttribute('value', funkcia);
+                  
+                  document.getElementById('kruh-volat').setAttribute('data-url', `tel:${tel}`);
+                  document.getElementById('kruh-sms').setAttribute('data-url', `sms:${tel}`);
+                  document.getElementById('kruh-email').setAttribute('data-url', `mailto:${email}`);
+                  break;
               }
             }
           });
